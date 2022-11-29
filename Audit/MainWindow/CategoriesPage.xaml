@@ -1,0 +1,39 @@
+﻿<Page x:Class="Audit.MainWindow.CategoriesPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:Audit"
+      mc:Ignorable="d"
+      Title="CategoriesPage">
+    <FlowDocument>
+        <Table>
+            <Table.Resources>
+                <Style TargetType="TableCell">
+                    <Setter Property="BorderBrush" Value="WHITE"/>
+                    <Setter Property="BorderThickness" Value="0,1,0,1" />
+                    <Setter Property="TextAlignment" Value="Center" />
+                </Style>
+            </Table.Resources>
+            <Table.Columns>
+                <TableColumn />
+                <TableColumn />
+                <TableColumn />
+                <TableColumn />
+            </Table.Columns>
+            <TableRowGroup x:Name="TblCategoriesData">
+                <TableRow>
+                    <TableCell>
+                        <Paragraph>Id</Paragraph>
+                    </TableCell>
+                    <TableCell>
+                        <Paragraph>Name</Paragraph>
+                    </TableCell>
+                    <TableCell>
+                        <Paragraph>Payment</Paragraph>
+                    </TableCell>
+                </TableRow>
+            </TableRowGroup>
+        </Table>
+    </FlowDocument>
+</Page>
