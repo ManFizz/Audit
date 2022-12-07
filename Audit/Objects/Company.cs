@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace Audit.Objects;
 
-public class Category : INotifyPropertyChanged
+public class Company : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -15,32 +15,31 @@ public class Category : INotifyPropertyChanged
     {
         if (PropertyChanged != null)
             PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    private static ObservableCollection<Category> ArrCategories {
+    }    
+    
+    private static ObservableCollection<Company> ArrCompany {
         get {
-            return ((App) Application.Current).ArrCategories;
+            return ((App) Application.Current).ArrCompany;
         }
     }
 
     private int _id;
     private string _name;
-    private int _payment;
+    private string _address;
     
-    public Category(int id, string name, int payment)
+    public Company(int id, string name, string address)
     {
         _id = id;
         _name = name;
-        _payment = payment;
+        _address = address;
     }
     
-    public Category(string name, int payment)
+    public Company(string name, string address)
     {
         SetName(name);
-        SetPayment(payment);
+        SetAddress(address);
         _id = -1;
     }
-
     public int Id
     {
         get => _id;
@@ -56,7 +55,7 @@ public class Category : INotifyPropertyChanged
         if (!value.All(t => template.Any(c => t == c)))
             throw new Exception("The input string contains unresolved characters");
 
-        if (ArrCategories.Any(c => (string.Compare(c.Name, value, StringComparison.Ordinal) == 0 && this != c)))
+        if (ArrCompany.Any(c => (string.Compare(c.Name, value, StringComparison.Ordinal) == 0 && this != c)))
             throw new Exception("The input string contains a non-unique Name");
             
         _name = value;
@@ -75,32 +74,33 @@ public class Category : INotifyPropertyChanged
         }
     }
 
-    private void SetPayment(int value)
+    private void SetAddress(string value)
     {
-        
-        if (value is < 1 or > 10000)
+        if (value.Length is < 1 or > 100)
             throw new Exception("Invalid input string size");
             
-        if (ArrCategories.Any(c => (c.Payment == value && this != c)))
-            throw new Exception("The input string contains a non-unique Payment");
+        const string template = "qwertyuiopasdfghjklzxcvvbnmйцукенгшщзххъфывапрролджэячсмитььбюё.,!?" +
+                                "QWERTYUIOPASDFGHJKLZXCCVBNMЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬЁ";
+        if (!value.All(t => template.Any(c => t == c)))
+            throw new Exception("The input string contains unresolved characters");
 
-        ((App) Application.Current).FastQuery($"UPDATE categories SET payment = {value} WHERE id = {Id};");
-        _payment = value;
-        NotifyPropertyChanged(nameof(Payment));
+        if (ArrCompany.Any(c => (string.Compare(c.Adress, value, StringComparison.Ordinal) == 0 && this != c)))
+            throw new Exception("The input string contains a non-unique Adress");
+            
+        _address = value;
+        NotifyPropertyChanged(nameof(Adress));
     }
     
-    public int Payment 
+    public string Adress 
     { 
-        get => _payment;
+        get => _address;
         set
         {
             try {
-                SetPayment(value);
+                SetAddress(value);
             } catch (Exception e) {
                 MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
             }
         }
     }
-
-
 }

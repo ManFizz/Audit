@@ -11,4 +11,8 @@
       <PackageReference Include="MySql.Data" Version="8.0.31" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Objects\DataGridCollection.cs" />
+    </ItemGroup>
+
 </Project>

@@ -5,26 +5,42 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:local="clr-namespace:Audit"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" MinWidth="400">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top">
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Top" x:Name="GridBtns">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition />
                 <ColumnDefinition />
+                <ColumnDefinition Width="40px" />
             </Grid.ColumnDefinitions>
-            <Button Padding="5" Grid.Column="0" Click="OnClick_BtnNavCategories">Categories</Button>
-            <Button Padding="5" Grid.Column="1" Click="OnClick_BtnNavWorkers">Workers</Button>
-            <Button Padding="5" Grid.Column="2" Click="OnClick_BtnNavHoursRecords">Hours Records</Button>
-            <Button Padding="5" Grid.Column="3" Click="OnClick_BtnNavCompany">Company</Button>
-            <Button Padding="5" Grid.Column="4" Click="OnClick_BtnNavUsers">Users</Button>
+            <Button Padding="5" Grid.Column="0" x:Name="BtnCategories" Click="OnClick_BtnNavCategories">Categories</Button>
+            <Button Padding="5" Grid.Column="1" x:Name="BtnWorkers" Click="OnClick_BtnNavWorkers">Workers</Button>
+            <Button Padding="5" Grid.Column="2" x:Name="BtnHoursRecords" Click="OnClick_BtnNavHoursRecords">Hours Records</Button>
+            <Button Padding="5" Grid.Column="3" x:Name="BtnCompany" Click="OnClick_BtnNavCompany">Company</Button>
+            <Button Padding="5" Grid.Column="4" x:Name="BtnUsers" Click="OnClick_BtnNavUsers">Users</Button>
+            <Button Padding="5" Grid.Column="5" x:Name="BtnExtra" Click="OnClick_ExtendBtn" Background="Lavender">Extra</Button>
         </Grid>
-        <Frame NavigationUIVisibility="Hidden" Grid.Row="1" x:Name="CenterFrame" VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalAlignment="Stretch"  HorizontalContentAlignment="Center" Source="UsersPage.xaml" Background="DarkGray" />
+        
+        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Row="1">
+            
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="6*" />
+                <ColumnDefinition x:Name="ExtraColumnDefinition" Width="1.5*" MinWidth="200px" />
+            </Grid.ColumnDefinitions>
+            
+            <Frame NavigationUIVisibility="Hidden" Grid.Column="0" x:Name="CenterFrame" VerticalAlignment="Stretch" VerticalContentAlignment="Center"
+                   HorizontalAlignment="Stretch"  HorizontalContentAlignment="Center" Background="DarkGray" />
+        
+            <Frame NavigationUIVisibility="Hidden" Grid.Column="1" x:Name="RightFrame" VerticalAlignment="Stretch" VerticalContentAlignment="Center"
+                   HorizontalAlignment="Stretch"  HorizontalContentAlignment="Center" Background="WhiteSmoke" />
+
+        </Grid>
     </Grid>
 </Window>
