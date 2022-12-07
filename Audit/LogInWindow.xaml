@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Audit"
         mc:Ignorable="d"
-        Title="Log in account" Height="170" Width="300">
+        Title="Log in account" Height="170" Width="400" MaxWidth="400" MinWidth="400" MinHeight="170" MaxHeight="170">
     <StackPanel Margin="10">
         <TextBlock TextAlignment="Center">Login</TextBlock>
         <TextBox x:Name="Login" Width="250">Amogus77</TextBox>

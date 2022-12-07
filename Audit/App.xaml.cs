@@ -22,6 +22,9 @@ namespace Audit
         public User? ActiveUser = null;
         public readonly ObservableCollection<Category> ArrCategories = new();
         public readonly ObservableCollection<Company> ArrCompany = new();
+        public readonly ObservableCollection<HoursRecrod> ArrHoursRecords = new();
+        public readonly ObservableCollection<User> ArrUsers = new();
+        public readonly ObservableCollection<Worker> ArrWorkers = new();
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -46,7 +49,7 @@ namespace Audit
 
         private static bool ParseCfgDb(out string host, out string database, out string user, out string pass)
         {
-            using var fs = new StreamReader("C:\\Users\\Mak\\RiderProjects\\Audit\\Audit\\cfg\\db.ini");
+            using var fs = new StreamReader("E:\\WorkSpace\\Projects\\Audit\\Audit\\cfg\\db.ini");
             var cfg = fs.ReadToEnd();
             var s = cfg.Split("\r\n");
             host = s[0].Split(":")[1];

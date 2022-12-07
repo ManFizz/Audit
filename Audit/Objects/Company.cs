@@ -50,8 +50,9 @@ public class Company : INotifyPropertyChanged
         if (value.Length is < 1 or > 100)
             throw new Exception("Invalid input string size");
             
+
         const string template = "qwertyuiopasdfghjklzxcvvbnmйцукенгшщзххъфывапрролджэячсмитььбюё.,!?" +
-                                "QWERTYUIOPASDFGHJKLZXCCVBNMЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬЁ";
+                                "QWERTYUIOPASDFGHJKLZXCCVBNMЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬЁ1234567890" + " ";
         if (!value.All(t => template.Any(c => t == c)))
             throw new Exception("The input string contains unresolved characters");
 
@@ -80,18 +81,18 @@ public class Company : INotifyPropertyChanged
             throw new Exception("Invalid input string size");
             
         const string template = "qwertyuiopasdfghjklzxcvvbnmйцукенгшщзххъфывапрролджэячсмитььбюё.,!?" +
-                                "QWERTYUIOPASDFGHJKLZXCCVBNMЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬЁ";
+                                "QWERTYUIOPASDFGHJKLZXCCVBNMЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬЁ1234567890" + " ";
         if (!value.All(t => template.Any(c => t == c)))
             throw new Exception("The input string contains unresolved characters");
 
-        if (ArrCompany.Any(c => (string.Compare(c.Adress, value, StringComparison.Ordinal) == 0 && this != c)))
+        if (ArrCompany.Any(c => (string.Compare(c.Address, value, StringComparison.Ordinal) == 0 && this != c)))
             throw new Exception("The input string contains a non-unique Adress");
             
         _address = value;
-        NotifyPropertyChanged(nameof(Adress));
+        NotifyPropertyChanged(nameof(Address));
     }
     
-    public string Adress 
+    public string Address 
     { 
         get => _address;
         set

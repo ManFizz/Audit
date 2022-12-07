@@ -1,10 +1,9 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using Audit.Objects;
 using MySql.Data.MySqlClient;
 
-namespace Audit.MainWindow;
+namespace Audit.MainWindow.Pages;
 
 public partial class CategoriesPage : Page
 {
@@ -12,7 +11,6 @@ public partial class CategoriesPage : Page
     {
         InitializeComponent();
         UpdateTable();
-        //CategoriesGrid.BeginEdit();
     }
 
     public void UpdateTable()

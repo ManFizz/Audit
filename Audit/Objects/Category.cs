@@ -51,7 +51,7 @@ public class Category : INotifyPropertyChanged
         if (value.Length is < 1 or > 100)
             throw new Exception("Invalid input string size");
             
-        const string template = "qwertyuiopasdfghjklzxcvvbnmйцукенгшщзххъфывапрролджэячсмитььбюё.,!?" +
+        const string template = "qwertyuiopasdfghjklzxcvvbnm\tйцукенгшщзххъфывапрролджэячсмитььбюё.,!?" +
                                 "QWERTYUIOPASDFGHJKLZXCCVBNMЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬЁ";
         if (!value.All(t => template.Any(c => t == c)))
             throw new Exception("The input string contains unresolved characters");
@@ -85,6 +85,14 @@ public class Category : INotifyPropertyChanged
             throw new Exception("The input string contains a non-unique Payment");
 
         ((App) Application.Current).FastQuery($"UPDATE categories SET payment = {value} WHERE id = {Id};");
+        /*
+         * поиск
+         * сохранить изменения
+         * undo / redo
+         * цвет чередует строки
+         * дисейблить кнопки
+         * 
+         */
         _payment = value;
         NotifyPropertyChanged(nameof(Payment));
     }

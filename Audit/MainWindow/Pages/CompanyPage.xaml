@@ -1,4 +1,4 @@
-﻿<Page x:Class="Audit.MainWindow.CompanyPage"
+﻿<Page x:Class="Audit.MainWindow.Pages.CompanyPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -16,9 +16,9 @@
             </DataGrid.Resources>
             
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Индетификатор"  Binding="{Binding Path=Id}" Width="2*" />
-                <DataGridHyperlinkColumn Header="Название" Binding="{Binding Path=Name}" Width="6*" />
-                <DataGridTextColumn Header="Адресс" Binding="{Binding Path=Adress}" Width="3*" />
+                <DataGridTextColumn Header="Идентификатор"  Binding="{Binding Path=Id}" Width="2*" />
+                <DataGridTextColumn Header="Название" Binding="{Binding Path=Name}" Width="6*" />
+                <DataGridTextColumn Header="Адрес" Binding="{Binding Path=Address}" Width="3*" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
