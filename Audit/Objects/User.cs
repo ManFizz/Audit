@@ -32,6 +32,11 @@ public class User
         SetIdWorker(idWroker);
         SetTypeUser(type);
     }
+    
+    //Page constructor --- DON'T USE
+    public User()
+    {
+    }
 
     public int Id
     {

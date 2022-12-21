@@ -5,12 +5,35 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Audit"
         mc:Ignorable="d"
-        Title="Log in account" Height="170" Width="400" MaxWidth="400" MinWidth="400" MinHeight="170" MaxHeight="170">
+        Title="Log in account" Height="170" Width="350" MaxWidth="350" MinWidth="400" MinHeight="170" MaxHeight="170" Background="#1C1C1C">
     <StackPanel Margin="10">
-        <TextBlock TextAlignment="Center">Login</TextBlock>
-        <TextBox x:Name="Login" Width="250">Amogus77</TextBox>
-        <TextBlock TextAlignment="Center">Password</TextBlock>
-        <PasswordBox x:Name="Password" Width="250" Password="123456"/>
-        <Button Click="LogInButton_Click"  Width="80" Margin="0 12 0 0">Sign in</Button>
+        <TextBlock TextAlignment="Center"  Foreground="White">Login</TextBlock>
+        <TextBox x:Name="Login" Width="250" Background="#292929"  Foreground="White" Padding="2">Amogus77</TextBox>
+        <TextBlock TextAlignment="Center"  Foreground="White" >Password</TextBlock>
+        <PasswordBox x:Name="Password" Background="#292929" Width="250" Foreground="White" Padding="2" Password="123456"/>
+        <Button Click="LogInButton_Click" Width="80" Content="Sign in" />
+        
+        <StackPanel.Resources>
+            <Style TargetType="Button">
+                <Setter Property="Background" Value="#414141"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="Margin" Value="0 12 0 0"/>
+                <Setter Property="Padding" Value="10"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="{TemplateBinding Background}" Padding="14 2" HorizontalAlignment="Center">
+                                <ContentPresenter />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="#545454"/>
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+        </StackPanel.Resources>
     </StackPanel>
 </Window>

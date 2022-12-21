@@ -1,3 +1,5 @@
+using System;
+
 namespace Audit.Objects;
 
 public class HoursRecrod
@@ -24,6 +26,13 @@ public class HoursRecrod
         SetWorkerId(workerId);
         SetDate(date);
         SetHours(hours);
+    }
+    
+    
+    //Page constructor --- DON'T USE
+    public HoursRecrod()
+    {
+        
     }
 
     public int Id

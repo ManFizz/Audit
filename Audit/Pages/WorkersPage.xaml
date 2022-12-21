@@ -1,0 +1,147 @@
+﻿<Page x:Class="Audit.Pages.WorkersPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      mc:Ignorable="d"
+      Title="WorkersPage">
+    <Grid Background="#1C1C1C" MinHeight="200" MinWidth="400">
+        <Grid.Resources>
+            <Style TargetType="TextBox">
+                <Setter Property="Background" Value="#292929"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Style>
+        </Grid.Resources>
+        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+                
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition MinWidth="90" Width="Auto" />
+                <ColumnDefinition Width="120" />
+                <ColumnDefinition Width="150" />
+                <ColumnDefinition Width="150" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Поиск" Foreground="White" Padding="10 2 5 0" />
+            <TextBox Grid.Column="0" Grid.Row="1" x:Name="IdSearch" TextChanged="Search_OnTextChanged"/>
+            <TextBlock Grid.Column="0" Grid.Row="1" IsHitTestVisible="False" Text="Введите id" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="LightGray">
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Text, ElementName=IdSearch}" Value="">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+            
+            <TextBox Grid.Column="1" Grid.Row="1" x:Name="NameSearch" TextChanged="Search_OnTextChanged"/>
+            <TextBlock Grid.Column="1" Grid.Row="1" IsHitTestVisible="False" Text="Введите ФИО" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="LightGray">
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Text, ElementName=NameSearch}" Value="">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+            
+            <TextBox Grid.Column="2" Grid.Row="1" x:Name="PassportSearch" TextChanged="Search_OnTextChanged"/>
+            <TextBlock Grid.Column="2" Grid.Row="1" IsHitTestVisible="False" Text="Введите пасспорт" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="LightGray">
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Text, ElementName=PassportSearch}" Value="">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+            
+            
+            <TextBox Grid.Column="3" Grid.Row="1" x:Name="DataSearch" TextChanged="Search_OnTextChanged"/>
+            <TextBlock Grid.Column="3" Grid.Row="1" IsHitTestVisible="False" Text="Введите дату рождения" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="LightGray">
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Text, ElementName=DataSearch}" Value="">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+            
+            <TextBox Grid.Column="4" Grid.Row="1" x:Name="IdCategortySearch" TextChanged="Search_OnTextChanged"/>
+            <TextBlock Grid.Column="4" Grid.Row="1" IsHitTestVisible="False" Text="Введите id категории" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="LightGray">
+                <TextBlock.Style>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Text, ElementName=IdCategortySearch}" Value="">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </Grid>
+        
+        <DataGrid x:Name="WorkersGrid" x:FieldModifier="public" AutoGenerateColumns="False" Grid.Row="1" Background="#1C1C1C" CanUserReorderColumns="False"
+                  CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="True" CanUserAddRows="True" SelectionMode="Single"
+                  CommandManager.PreviewCanExecute="WorkersGrid_OnPreviewCanExecute" HeadersVisibility="Column" Margin="5" AlternatingRowBackground="#333333" 
+                  AddingNewItem="WorkersGrid_OnAddingNewItem">
+            <DataGrid.Resources>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="Foreground" Value="White"/>
+                </Style>
+                
+                <Style TargetType="{x:Type DataGrid}">
+                    <Setter Property="Background" Value="#1C1C1C" />
+                    <Setter Property="AlternationCount" Value="2" />
+                    <Setter Property="BorderBrush" Value="Black"/>
+                    <Setter Property="BorderThickness" Value="1" />
+                </Style>
+                
+                <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
+                    <Setter Property="Background" Value="#1C1C1C" />
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="Padding" Value="7 3"/>
+                    <Setter Property="BorderBrush" Value="Black"/>
+                    <Setter Property="BorderThickness" Value="0 0 1 1" />
+                </Style>
+
+                <Style TargetType="{x:Type DataGridRow}">
+                    <Setter Property="Background" Value="#2A2A2A"/>
+                </Style>
+            </DataGrid.Resources>
+            
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="№"  Binding="{Binding Path=Id}" Width="Auto" />
+                <DataGridTextColumn Header="ФИО" Binding="{Binding Path=Name}" Width="Auto" />
+                <DataGridTextColumn Header="Пасспорт" Binding="{Binding Path=Passport}" Width="Auto" />
+                <DataGridTextColumn Header="Дата рождения" Binding="{Binding Path=Birthday}" Width="Auto" />
+                <DataGridTextColumn Header="Номер телефона" Binding="{Binding Path=PhoneNumber}" Width="Auto" />
+                <DataGridTextColumn Header="№ категории" Binding="{Binding Path=CategoryId}" Width="Auto" />
+            </DataGrid.Columns>
+        </DataGrid>
+        
+    </Grid>
+</Page>

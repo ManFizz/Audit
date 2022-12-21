@@ -1,27 +1,41 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Audit.Objects;
 using MySql.Data.MySqlClient;
+
 
 namespace Audit
 {
     public partial class LogInWindow : Window
     {
+        
         public LogInWindow()
         {
             InitializeComponent();
+            this.WindowStyle+=2;
+        }
+
+        private readonly MainWindow? _mainWindow = null;
+        public LogInWindow(MainWindow? mainWindow)
+        {
+            InitializeComponent();
+            _mainWindow = mainWindow;
+        }
+        
+        private bool _shown;
+        protected override void OnContentRendered(EventArgs e)
+        {
+            base.OnContentRendered(e);
+
+            if (_shown)
+                return;
+            
+            _shown = true;
+            if(_mainWindow != null)
+                _mainWindow.Close();
         }
 
         private void LogInButton_Click(object sender, RoutedEventArgs e)
@@ -48,7 +62,7 @@ namespace Audit
             app.DbCon.Close();
 
 
-            var window = new MainWindow.MainWindow(this);
+            var window = new MainWindow(this);
             window.Show();
             //this.Close(); //ERROR Display mainwindow - fix by constructor mainwindow
         }

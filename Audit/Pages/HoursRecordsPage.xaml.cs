@@ -1,9 +1,10 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Audit.Objects;
 using MySql.Data.MySqlClient;
 
-namespace Audit.MainWindow.Pages;
+namespace Audit.Pages;
 
 public partial class HoursRecordsPage : Page
 {
@@ -26,5 +27,20 @@ public partial class HoursRecordsPage : Page
         }
         HoursRecordsGrid.ItemsSource = app.ArrHoursRecords;
         app.DbCon.Close();
+    }
+
+    private void Search_OnTextChanged(object sender, TextChangedEventArgs e)
+    {
+        
+    }
+
+    private void HoursRecordsGrid_OnPreviewCanExecute(object sender, CanExecuteRoutedEventArgs e)
+    {
+        
+    }
+
+    private void HoursRecordsGrid_OnAddingNewItem(object? sender, AddingNewItemEventArgs e)
+    {
+        
     }
 }

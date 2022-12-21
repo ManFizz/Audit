@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using Audit.Objects;
 using MySql.Data.MySqlClient;
 
-namespace Audit.MainWindow.Pages;
+namespace Audit.Pages;
 
 public partial class UsersPage : Page
 {
@@ -28,5 +29,20 @@ public partial class UsersPage : Page
         }
         UsersGrid.ItemsSource = app.ArrUsers;
         app.DbCon.Close();
+    }
+
+    private void Search_OnTextChanged(object sender, TextChangedEventArgs e)
+    {
+        
+    }
+
+    private void UsersGrid_OnPreviewCanExecute(object sender, CanExecuteRoutedEventArgs e)
+    {
+        
+    }
+
+    private void UsersGrid_OnAddingNewItem(object? sender, AddingNewItemEventArgs e)
+    {
+        
     }
 }

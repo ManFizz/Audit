@@ -7,6 +7,7 @@ using System.Configuration;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using Audit.Objects;
@@ -49,7 +50,7 @@ namespace Audit
 
         private static bool ParseCfgDb(out string host, out string database, out string user, out string pass)
         {
-            using var fs = new StreamReader("E:\\WorkSpace\\Projects\\Audit\\Audit\\cfg\\db.ini");
+            using var fs = new StreamReader("cfg\\db.ini");
             var cfg = fs.ReadToEnd();
             var s = cfg.Split("\r\n");
             host = s[0].Split(":")[1];

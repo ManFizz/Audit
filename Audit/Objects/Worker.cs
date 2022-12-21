@@ -28,6 +28,11 @@ public class Worker
         SetPhoneNumber(phoneNumber);
         SetCategoryId(categoryId);
     }
+    
+    //Page constructor --- DON'T USE
+    public Worker()
+    {
+    }
 
     public int Id
     {

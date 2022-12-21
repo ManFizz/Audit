@@ -5,14 +5,13 @@
         <TargetFramework>net6.0-windows</TargetFramework>
         <Nullable>enable</Nullable>
         <UseWPF>true</UseWPF>
+        <ApplicationIcon>Resourses\audit.ico</ApplicationIcon>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="MySql.Data" Version="8.0.31" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Compile Remove="Objects\DataGridCollection.cs" />
+        <FrameworkReference Include="Microsoft.WindowsDesktop.App.Wpf" />
+        <Compile Remove="Objects\DataGridCollection.cs" />
     </ItemGroup>
 
 </Project>
