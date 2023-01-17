@@ -1,172 +1,145 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using MySql.Data.MySqlClient;
-
 
 namespace Audit.Objects;
 
-public class Category : INotifyPropertyChanged
+public class Category : BaseObject
 {
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    private void NotifyPropertyChanged(string propertyName)
-    {
-        if (PropertyChanged != null)
-            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-    }
-
-    private static ObservableCollection<Category> ArrCategories {
-        get {
-            return ((App) Application.Current).ArrCategories;
-        }
-    }
-
-    private int _id;
-    private string _name;
-    private int _payment;
-    
-    //Force constructor --- DON'T USE
     public Category(int id, string name, int payment)
     {
-        _id = id;
+        Id = id > -1 ? id : GetUniqueId();
+        
         _name = name;
         _payment = payment;
     }
     
-    //Main constructor
-    public Category(string name, int payment)
-    {
-        _name = "";
-        SetName(name);
-        SetPayment(payment);
-        SetUniqueId();
-    }
+    [EditorBrowsable(EditorBrowsableState.Never)] [Obsolete("Constuctor created for dataGrid", true)]
+    public Category() {}
 
-    //Page constructor --- DON'T USE
-    public Category()
-    {
-        SetUniqueId();
-        _name = "Name";
-        SetUniquePayment();
-    }
+    #region Id
 
-    public int Id
+    private const int MaxId = 99999;
+    public int Id { get; }
+
+    private static int GetUniqueId()
     {
-        get => _id;
-        set
+        var id = ArrCategories.Select(c => c.Id).Prepend(-1).Max() + 1;
+        if (id > MaxId)
         {
-            try {
-                SetId(value);
-            } catch (Exception e) {
-                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
-            }
+            id = 1;
+            while (ArrCategories.Any(c => c.Id == id))
+                id++;
+            
+            if(id > MaxId)
+                throw new Exception("Таблица категорий заполнена, удалите не нужные записи");
         }
+
+        return id;
     }
+    #endregion
     
-    private void SetId(int value)
-    {
-        if (value is < 0 or > 99999)
-            throw new Exception("Invalid input string size");
-        
-        if (ArrCategories.Any(c => (c.Id == value && this != c)))
-            throw new Exception("The input string contains a non-unique Id");
-        
-        ((App) Application.Current).FastQuery($"UPDATE categories SET id = {value} WHERE id = {Id};");
-        _id = value;
-        NotifyPropertyChanged(nameof(Id));
-    }
-    
+    #region Name
+    private const int MinLengthName = 6;
+    private const int MaxLengthName = 100;
+    private const string NameCharacters = " qwertyuiopasdfghjklzxcvvbnmйцукенгшщзххъфывапрролджэячсмитььбюёQWERTYUIOPASDFGHJKLZXCCVBNMЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬЁ";
+    private string _name;
     public string Name
     {
         get => _name;
-        set
-        {
+        set {
             try {
-                SetName(value);
+                CheckName(value);
+                
+                app.FastQuery($"UPDATE categories SET name = '{value}' WHERE id = {Id};");
+                _name = value;
+                NotifyPropertyChanged(nameof(Name));
             } catch (Exception e) {
-                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
+                MessageBox.Show(e.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
             }
         }
     }
 
-    private void SetName(string value)
+    public void CheckName(string value)
     {
-        if (value.Length is < 1 or > 100)
-            throw new Exception("Invalid input string size");
+        if (value.Length < MinLengthName)
+            throw new Exception($"Название должно содержать минимум {MinLengthName} символов");
+        
+        if (value.Length > MaxLengthName)
+            throw new Exception($"Название должно содержать максимум {MaxLengthName} символов");
             
-        const string template = "qwertyuiopasdfghjklzxcvvbnm\tйцукенгшщзххъфывапрролджэячсмитььбюё.,!?" +
-                                "QWERTYUIOPASDFGHJKLZXCCVBNMЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬЁ";
-        if (!value.All(t => template.Any(c => t == c)))
-            throw new Exception("The input string contains unresolved characters");
+        if (value.Any(t => NameCharacters.All(c => t != c)))
+            throw new Exception($"Название содержит недопустимые символы - '{value.First(t => NameCharacters.All(c => t != c))}'");
 
-        if (ArrCategories.Any(c => (string.Compare(c.Name, value, StringComparison.Ordinal) == 0 && this != c)))
-            throw new Exception("The input string contains a non-unique Name");
-            
-        ((App) Application.Current).FastQuery($"UPDATE categories SET name = '{value}' WHERE id = {Id};");
-        _name = value;
-        NotifyPropertyChanged(nameof(Name));
+        if (ArrCategories.Any(category => string.Compare(category.Name, value, StringComparison.Ordinal) == 0 && this != category))
+            throw new Exception("Введенное название уже существует");
     }
+    #endregion
     
+    #region Payment
+    private const int MinPayment = 1;
+    private const int MaxPayment = 9999;
+    private int _payment;
     public int Payment 
     { 
         get => _payment;
-        set
-        {
+        set {
             try {
-                SetPayment(value);
+                CheckPayment(value);
+
+                app.FastQuery($"UPDATE categories SET payment = {value} WHERE id = {Id};");
+                _payment = value;
+                NotifyPropertyChanged(nameof(Payment));
             } catch (Exception e) {
-                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
+                MessageBox.Show(e.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
             }
         }
     }
 
-    private void SetPayment(int value)
+    public void CheckPayment(int value)
     {
+        if (value < MinPayment)
+            throw new Exception($"Введенная оплата не должна быть меньше {MinPayment}");
         
-        if (value is < 1 or > 10000)
-            throw new Exception("Invalid string int size");
+        if (value > MaxPayment)
+            throw new Exception($"Введенная оплата не должна быть больше {MaxPayment}");
             
-        if (ArrCategories.Any(c => (c.Payment == value && this != c)))
-            throw new Exception("The input string contains a non-unique Payment");
-
-        ((App) Application.Current).FastQuery($"UPDATE categories SET payment = {value} WHERE id = {Id};");
-        _payment = value;
-        NotifyPropertyChanged(nameof(Payment));
+        if (ArrCategories.Any(c => c.Payment == value && this != c))
+            throw new Exception("Введенная оплата уже существует");
+    }
+    #endregion
+    
+    public bool Remove()
+    {
+        return Remove(this);
     }
 
-    public void Remove()
+    private static bool Remove(Category cat)
     {
-        Remove(this);
-    }
+        var arr = app.ArrWorkers.Where(w => w.CategoryId == cat.Id).ToList();
+        if (arr.Count > 0)
+        {
+            var dialogResult = MessageBox.Show($"При удалении категории будет удалено {arr.Count} сотрудников. Продолжить?", "Удаление категории", MessageBoxButton.YesNo);
+            if (dialogResult != MessageBoxResult.Yes)
+            {
+                MessageBox.Show("Операция отменена пользователем", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
+                return false;
+            }
+        }
 
-    public static void Remove(Category cat)
-    {
-        var app = ((App) Application.Current);
-        var cmd = new MySqlCommand($"DELETE FROM categories WHERE id = {cat.Id}", app.DbCon);
-        app.DbCon.Open();
-        cmd.ExecuteNonQuery();
-        app.DbCon.Close();
+        foreach(var worker in arr)
+            worker.Remove();
+        
         app.ArrCategories.Remove(app.ArrCategories.First(c => c.Id == cat.Id));
-        //MessageBox.Show("Category removed successfully", "Successfully", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.None);
+        app.FastQuery($"DELETE FROM categories WHERE id = {cat.Id}");
+        
+        return true;
     }
 
-    public void SetUniqueId()
+    public void Insert()
     {
-        _id = ArrCategories.Select(c => c._id).Prepend(-1).Max() + 1;
-    }
-    public void SetUniquePayment()
-    {
-        _payment = ArrCategories.Select(c => c._payment).Prepend(-1).Max() + 1;
-    }
-    public void SetUniqueName()
-    {
-        var n = "I";
-        while (ArrCategories.Any(c => string.CompareOrdinal(c._name, n) == 0))
-            n += "I"; //Can br broken on limits
-        _name = n;
+        app.FastQuery($"INSERT INTO categories (id, name, payment) VALUES ('{Id}','{Name}',{Payment})");
     }
     
 }

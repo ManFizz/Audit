@@ -4,11 +4,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         mc:Ignorable="d"
-        Title="MainWindow" Height="400" Width="800" MinWidth="500" MinHeight="400" Background="#222222">
+        Title="MainWindow" Height="700" Width="1500" MinWidth="800" MinHeight="600" Background="#222222">
     
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="170" />
+            <ColumnDefinition Width="180" />
             <ColumnDefinition />
         </Grid.ColumnDefinitions>
         
@@ -25,9 +25,9 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition />
                 </Grid.RowDefinitions>
-                <TextBlock Grid.Row="0" x:Name="UserLogin" FontWeight="Bold" Foreground="White" TextWrapping="Wrap" FontSize="17" Padding="20 4 0 0">User Name</TextBlock>
-                <TextBlock Grid.Row="1" x:Name="UserType" Foreground="DarkGray" FontSize="12" Padding="20 0 0 8">Login</TextBlock>
-                <Button Grid.Row="2" Click="Exit" Content="Exit" HorizontalAlignment="Left" Background="Transparent"
+                <TextBlock Grid.Row="0" x:Name="UserLogin" FontWeight="Bold" Foreground="White" TextWrapping="Wrap" FontSize="17" Padding="20 4 0 0" />
+                <TextBlock Grid.Row="1" x:Name="UserType" Foreground="DarkGray" FontSize="12" Padding="20 0 0 8" />
+                <Button Grid.Row="2" Click="Exit" Content="Выход" HorizontalAlignment="Left" Background="Transparent"
                         BorderBrush="Transparent" Foreground="White" />
                 
                 <Grid.Resources>
@@ -51,7 +51,7 @@
             </Grid>
             
             <Canvas Grid.Row="1" Height="10" Width="Auto">
-                <Line X1="0" Y1="0" X2="170" Y2="0" Stroke="DimGray" StrokeThickness="3" />
+                <Line X1="0" Y1="0" X2="180" Y2="0" Stroke="DimGray" StrokeThickness="3" />
             </Canvas>
             
             <Grid Grid.Row="2">
@@ -86,23 +86,18 @@
                     </Style>
                 </Grid.Resources>
                 
-                <Button Grid.Row="1" x:Name="BtnCategories" Click="OnClick_BtnNavCategories">Categories</Button>
-                <Button Grid.Row="2" x:Name="BtnWorkers" Click="OnClick_BtnNavWorkers">Workers</Button>
-                <Button Grid.Row="3" x:Name="BtnHoursRecords" Click="OnClick_BtnNavHoursRecords">Hours Records</Button>
-                <Button Grid.Row="4" x:Name="BtnCompany" Click="OnClick_BtnNavCompany">Company</Button>
-                <Button Grid.Row="5" x:Name="BtnUsers" Click="OnClick_BtnNavUsers">Users</Button>
+                <Button Grid.Row="1" x:Name="BtnCategories" Click="OnClick_BtnNavCategories" FontWeight="Bold">Категории</Button>
+                <Button Grid.Row="2" x:Name="BtnWorkers" Click="OnClick_BtnNavWorkers">Сотрудники</Button>
+                <Button Grid.Row="3" x:Name="BtnHoursRecords" Click="OnClick_BtnNavHoursRecords">Отработанные часы</Button>
+                <Button Grid.Row="4" x:Name="BtnCompany" Click="OnClick_BtnNavCompany">Компании</Button>
+                <Button Grid.Row="5" x:Name="BtnUsers" Click="OnClick_BtnNavUsers">Пользователи</Button>
                 
             </Grid>
         </Grid>
-        
-        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Grid.Column="1">
-            
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="6*" />
-            </Grid.ColumnDefinitions>
-            
-            <Frame NavigationUIVisibility="Hidden" Grid.Column="0" x:Name="CenterFrame" x:FieldModifier="public" VerticalAlignment="Stretch" VerticalContentAlignment="Center"
-                   HorizontalAlignment="Stretch"  HorizontalContentAlignment="Center" Background="#1C1C1C" Source="Pages/CategoriesPage.xaml" />
-        </Grid>
+        <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Frame NavigationUIVisibility="Hidden" x:Name="CenterFrame" x:FieldModifier="protected"
+                   VerticalAlignment="Stretch" VerticalContentAlignment="Center" HorizontalAlignment="Stretch"  
+                   HorizontalContentAlignment="Center" Background="#1C1C1C" Source="Pages/CategoriesPage.xaml" Margin="5 0 0 0" />
+        </ScrollViewer>
     </Grid>
 </Window>

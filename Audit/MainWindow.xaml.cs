@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Audit;
 
@@ -16,51 +17,66 @@ public partial class MainWindow : Window
         
         UserLogin.Text = app.ActiveUser.Login;
         UserType.Text = app.ActiveUser.Type.ToString();
+        if (app.ActiveUser.Type == TypeUser.worker)
+        {
+            BtnWorkers.Visibility = Visibility.Collapsed;
+        }
+        
+        if (app.ActiveUser.Type != TypeUser.hr)
+        {
+            BtnUsers.Visibility = Visibility.Collapsed;
+        }
     }
 
-    private bool _shown;
-    protected override void OnContentRendered(EventArgs e)
+
+    private void ClearStyleBtns(Control btn)
     {
-        base.OnContentRendered(e);
-
-        if (_shown)
-            return;
-
-        _shown = true;
-        _logInWindow.Close();
+        BtnCategories.FontWeight = FontWeights.Normal;
+        BtnCompany.FontWeight = FontWeights.Normal;
+        BtnUsers.FontWeight = FontWeights.Normal;
+        BtnHoursRecords.FontWeight = FontWeights.Normal;
+        BtnWorkers.FontWeight = FontWeights.Normal;
+        
+        btn.FontWeight = FontWeights.Bold;
     }
-
+    
     private void OnClick_BtnNavCategories(object sender, RoutedEventArgs e)
     {
         CenterFrame.Source = new Uri("Pages/CategoriesPage.xaml", UriKind.Relative);
+        ClearStyleBtns(BtnCategories);
     }
 
     private void OnClick_BtnNavWorkers(object sender, RoutedEventArgs e)
     {
         CenterFrame.Source = new Uri("Pages/WorkersPage.xaml", UriKind.Relative);
+        ClearStyleBtns(BtnWorkers);
     }
 
     private void OnClick_BtnNavHoursRecords(object sender, RoutedEventArgs e)
     {
         CenterFrame.Source = new Uri("Pages/HoursRecordsPage.xaml", UriKind.Relative);
+        ClearStyleBtns(BtnHoursRecords);
     }
 
     private void OnClick_BtnNavCompany(object sender, RoutedEventArgs e)
     {
         CenterFrame.Source = new Uri("Pages/CompanyPage.xaml", UriKind.Relative);
+        ClearStyleBtns(BtnCompany);
     }
 
     private void OnClick_BtnNavUsers(object sender, RoutedEventArgs e)
     {
         CenterFrame.Source = new Uri("Pages/UsersPage.xaml", UriKind.Relative);
+        ClearStyleBtns(BtnUsers);
     }
 
     private void Exit(object sender, RoutedEventArgs e)
     {
         var app = (App) Application.Current;
         app.ActiveUser = null;
-        
-        var window = new LogInWindow(this);
-        window.Show();
+
+        Hide();
+        _logInWindow.Show();
+        Close();
     }
 }

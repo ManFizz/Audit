@@ -6,6 +6,10 @@
       mc:Ignorable="d"
       Title="WorkersPage">
     <Grid Background="#1C1C1C" MinHeight="200" MinWidth="400">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
         <Grid.Resources>
             <Style TargetType="TextBox">
                 <Setter Property="Background" Value="#292929"/>
@@ -30,6 +34,7 @@
                 <ColumnDefinition Width="120" />
                 <ColumnDefinition Width="150" />
                 <ColumnDefinition Width="150" />
+                <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <TextBlock Text="Поиск" Foreground="White" Padding="10 2 5 0" />
             <TextBox Grid.Column="0" Grid.Row="1" x:Name="IdSearch" TextChanged="Search_OnTextChanged"/>
@@ -102,15 +107,36 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
+            
+            <Button Grid.Column="5" Grid.Row="1" x:Name="BtnCategory" Visibility="Collapsed" Content="Изменить" Click="BtnCategory_OnClick" Width="80"/>
         </Grid>
         
-        <DataGrid x:Name="WorkersGrid" x:FieldModifier="public" AutoGenerateColumns="False" Grid.Row="1" Background="#1C1C1C" CanUserReorderColumns="False"
+        <DataGrid x:Name="WorkersGrid" x:FieldModifier="public" AutoGenerateColumns="False" Grid.Row="1" Grid.Column="0"
+                  Background="#1C1C1C" CanUserReorderColumns="False"
                   CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="True" CanUserAddRows="True" SelectionMode="Single"
                   CommandManager.PreviewCanExecute="WorkersGrid_OnPreviewCanExecute" HeadersVisibility="Column" Margin="5" AlternatingRowBackground="#333333" 
-                  AddingNewItem="WorkersGrid_OnAddingNewItem">
+                  AddingNewItem="WorkersGrid_OnAddingNewItem" PreparingCellForEdit="WorkersGrid_OnPreparingCellForEdit" SelectionChanged="WorkersGrid_OnSelectionChanged"
+                  CellEditEnding="WorkersGrid_OnCellEditEnding" RowEditEnding="WorkersGrid_OnRowEditEnding" SelectedCellsChanged="WorkersGrid_OnSelectedCellsChanged"
+                  InitializingNewItem="WorkersGrid_OnInitializingNewItem">
             <DataGrid.Resources>
                 <Style TargetType="DataGridCell">
                     <Setter Property="Foreground" Value="White"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="#5A5A5A" />
+                            <Setter Property="BorderBrush"
+                                    Value="Transparent" />
+                            <Setter Property="BorderThickness"
+                                    Value="1" />
+                        </Trigger>
+                        <Trigger Property="IsEditing" Value="True">
+                            <Setter Property="Background" Value="#3A3A3A" />
+                            <Setter Property="BorderBrush"
+                                    Value="White" />
+                            <Setter Property="BorderThickness"
+                                    Value="1" />
+                        </Trigger>
+                    </Style.Triggers>
                 </Style>
                 
                 <Style TargetType="{x:Type DataGrid}">
@@ -134,14 +160,18 @@
             </DataGrid.Resources>
             
             <DataGrid.Columns>
-                <DataGridTextColumn Header="№"  Binding="{Binding Path=Id}" Width="Auto" />
+                <DataGridTextColumn Header="№"  Binding="{Binding Path=Id}" Width="Auto" IsReadOnly="True" />
                 <DataGridTextColumn Header="ФИО" Binding="{Binding Path=Name}" Width="Auto" />
                 <DataGridTextColumn Header="Пасспорт" Binding="{Binding Path=Passport}" Width="Auto" />
                 <DataGridTextColumn Header="Дата рождения" Binding="{Binding Path=Birthday}" Width="Auto" />
                 <DataGridTextColumn Header="Номер телефона" Binding="{Binding Path=PhoneNumber}" Width="Auto" />
                 <DataGridTextColumn Header="№ категории" Binding="{Binding Path=CategoryId}" Width="Auto" />
+                <DataGridTextColumn Header="Категория" Binding="{Binding Path=CategoryName}" Width="Auto" IsReadOnly="True" />
             </DataGrid.Columns>
         </DataGrid>
+        
+        <Frame NavigationUIVisibility="Hidden" Grid.Row="1" Grid.Column="1" x:Name="RightFrame" x:FieldModifier="public" VerticalAlignment="Stretch" VerticalContentAlignment="Center"
+               HorizontalAlignment="Stretch"  HorizontalContentAlignment="Center" Background="#1C1C1C" ContentRendered="RightFrame_OnContentRendered" />
         
     </Grid>
 </Page>

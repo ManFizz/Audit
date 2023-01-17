@@ -3,176 +3,146 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
-using MySql.Data.MySqlClient;
 
 
 namespace Audit.Objects;
 
-public class Company : INotifyPropertyChanged
+public class Company : BaseObject
 {
-    public event PropertyChangedEventHandler? PropertyChanged;
-
-    private void NotifyPropertyChanged(string propertyName)
-    {
-        if (PropertyChanged != null)
-            PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-    }    
-    
-    private static ObservableCollection<Company> ArrCompany {
-        get {
-            return ((App) Application.Current).ArrCompany;
-        }
-    }
-
-    private int _id;
-    private string _name;
-    private string _address;
-    
     public Company(int id, string name, string address)
     {
-        _id = id;
+        Id = id > -1 ? id : GetUniqueId();
         _name = name;
         _address = address;
     }
     
-    public Company(string name, string address)
-    {
-        _name = "";
-        _address = "";
-        SetName(name);
-        SetAddress(address);
-        _id = -1;
-    }
+    [EditorBrowsable(EditorBrowsableState.Never)] [Obsolete("Constuctor created for dataGrid", true)]
+    public Company() {}
     
-    //Page constructor --- DON'T USE
-    public Company()
+    #region Id
+    private const int MaxId = 99999;
+    public int Id { get; }
+
+    private static int GetUniqueId()
     {
-        SetUniqueId();
-        SetUniqueName();
-        SetUniqueAddress();
-    }
-    public int Id
-    {
-        get => _id;
-        set
+        var id = ArrCompany.Select(c => c.Id).Prepend(-1).Max() + 1;
+        if (id > MaxId)
         {
-            try {
-                SetId(value);
-            } catch (Exception e) {
-                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
-            }
+            id = 1;
+            while (ArrCompany.Any(c => c.Id == id))
+                id++;
+            
+            if(id > MaxId)
+                throw new Exception("Таблица категорий заполнена, удалите не нужные записи");
         }
-    }
 
-    private void SetId(int value)
-    {
-        if (value is < 0 or > 99999)
-            throw new Exception("Invalid input string size");
-        
-        if (ArrCompany.Any(c => (c.Id == value && this != c)))
-            throw new Exception("The input string contains a non-unique Id");
-        
-        ((App) Application.Current).FastQuery($"UPDATE company SET id = {value} WHERE id = {Id};");
-        _id = value;
-        NotifyPropertyChanged(nameof(Id));
+        return id;
     }
-
+    #endregion
+    
+    #region Name
+    private const int MinLengthName = 6;
+    private const int MaxLengthName = 100;
+    private const string NameCharacters = " qwertyuiopasdfghjklzxcvvbnmйцукенгшщзххъфывапрролджэячсмитььбюёQWERTYUIOPASDFGHJKLZXCCVBNMЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬЁ1234567890";
+    private string _name;
+    
     public string Name
     {
         get => _name;
         set
         {
             try {
-                SetName(value);
+                CheckName(value);
+            
+                app.FastQuery($"UPDATE company SET name = '{value}' WHERE id = {Id};");
+                _name = value;
+                NotifyPropertyChanged(nameof(Name));
             } catch (Exception e) {
-                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
+                MessageBox.Show(e.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
             }
         }
     }
-    private void SetName(string value)
+    
+    public void CheckName(string value)
     {
-        if (value.Length is < 1 or > 100)
-            throw new Exception("Invalid input string size");
-            
+        if (value.Length < MinLengthName)
+            throw new Exception($"Название должно содержать минимум {MinLengthName} символов");
+        
+        if (value.Length > MaxLengthName)
+            throw new Exception($"Название должно содержать максимум {MaxLengthName} символов");
+        
+        if (!value.All(t => NameCharacters.Any(c => t == c)))
+            throw new Exception($"Название содержит недопустимые символы - '{value.First(t => NameCharacters.All(c => t != c))}'");
 
-        const string template = "qwertyuiopasdfghjklzxcvvbnmйцукенгшщзххъфывапрролджэячсмитььбюё.,!?" +
-                                "QWERTYUIOPASDFGHJKLZXCCVBNMЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬЁ1234567890" + " ";
-        if (!value.All(t => template.Any(c => t == c)))
-            throw new Exception("The input string contains unresolved characters");
-
-        if (ArrCompany.Any(c => (string.Compare(c.Name, value, StringComparison.Ordinal) == 0 && this != c)))
-            throw new Exception("The input string contains a non-unique Name");
-            
-        ((App) Application.Current).FastQuery($"UPDATE company SET name = '{value}' WHERE id = {Id};");
-        _name = value;
-        NotifyPropertyChanged(nameof(Name));
+        if (ArrCompany.Any(c => string.Compare(c.Name, value, StringComparison.Ordinal) == 0 && this != c))
+            throw new Exception("Введенное название уже существует");
     }
+    #endregion
 
+    #region Address
+    private const int MinLengthAddress = 6;
+    private const int MaxLengthAddress  = 100;
+    private const string AddressCharacters = " qwertyuiopasdfghjklzxcvvbnmйцукенгшщзххъфывапрролджэячсмитььбюёQWERTYUIOPASDFGHJKLZXCCVBNMЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬЁ.,!?1234567890";
+    private string _address;
+    
     public string Address 
     { 
         get => _address;
         set
         {
             try {
-                SetAddress(value);
+                CheckAddress(value);
+            
+                ((App) Application.Current).FastQuery($"UPDATE company SET address = '{value}' WHERE id = {Id};");
+                _address = value;
+                NotifyPropertyChanged(nameof(Address));
             } catch (Exception e) {
-                MessageBox.Show(e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
+                MessageBox.Show(e.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
             }
         }
     }
-    private void SetAddress(string value)
+
+    public void CheckAddress(string value)
     {
-        if (value.Length is < 1 or > 100)
-            throw new Exception("Invalid input string size");
+        if (value.Length < MinLengthAddress)
+            throw new Exception($"Название должно содержать минимум {MinLengthAddress} символов");
+        
+        if (value.Length > MaxLengthAddress)
+            throw new Exception($"Название должно содержать максимум {MaxLengthAddress} символов");
             
-        const string template = "qwertyuiopasdfghjklzxcvvbnmйцукенгшщзххъфывапрролджэячсмитььбюё.,!?" +
-                                "QWERTYUIOPASDFGHJKLZXCCVBNMЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬЁ1234567890" + " ";
-        if (!value.All(t => template.Any(c => t == c)))
-            throw new Exception("The input string contains unresolved characters");
+        if (!value.All(t => AddressCharacters.Any(c => t == c)))
+            throw new Exception($"Название содержит недопустимые символы - '{value.First(t => AddressCharacters.All(c => t != c))}'");
 
         if (ArrCompany.Any(c => (string.Compare(c.Address, value, StringComparison.Ordinal) == 0 && this != c)))
-            throw new Exception("The input string contains a non-unique Adress");
-            
-        ((App) Application.Current).FastQuery($"UPDATE company SET address = '{value}' WHERE id = {Id};");
-        _address = value;
-        NotifyPropertyChanged(nameof(Address));
+            throw new Exception("Введенный адресс уже существует");
+    }
+    #endregion
+
+    public bool Remove()
+    {
+        return Remove(this);
     }
 
-    public void Remove()
+    private static bool Remove(Company comp)
     {
-        Remove(this);
-    }
-    
-    public static void Remove(Company comp)
-    {
-        var app = ((App) Application.Current);
-        var cmd = new MySqlCommand($"DELETE FROM company WHERE id = {comp.Id}", app.DbCon);
-        app.DbCon.Open();
-        cmd.ExecuteNonQuery();
-        app.DbCon.Close();
+        var arr = app.ArrHoursRecords.Where(hr => hr.CompanyId == comp.Id).ToList();
+        var dialogResult = MessageBox.Show($"При удалении компании будет удалено {arr.Count} записей об отработанных часах. Продолжить?", "Удаление компании", MessageBoxButton.YesNo);
+        if (dialogResult != MessageBoxResult.Yes)
+        {
+            MessageBox.Show("Операция отменена пользователем", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
+            return false;
+        }
+
+        foreach(var hoursRecord in arr)
+            hoursRecord.Remove();
         
+        app.FastQuery($"DELETE FROM company WHERE id = {comp.Id}");
         app.ArrCompany.Remove(app.ArrCompany.First(c => c.Id == comp.Id));
-        //MessageBox.Show("Category removed successfully", "Successfully", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.None);
+        return true;
     }
-    
-    public void SetUniqueId()
+
+    public void Insert()
     {
-        _id = ArrCompany.Select(c => c._id).Prepend(-1).Max() + 1;
-    }
-    
-    public void SetUniqueAddress()
-    {
-        var n = "I";
-        while (ArrCompany.Any(c => string.CompareOrdinal(c._address, n) == 0))
-            n += "I"; //Can br broken on limits
-        _address = n;
-    }
-    
-    public void SetUniqueName()
-    {
-        var n = "I";
-        while (ArrCompany.Any(c => string.CompareOrdinal(c._name, n) == 0))
-            n += "I"; //Can br broken on limits
-        _name = n;
+        app.FastQuery($"INSERT INTO company (id, name, address) VALUES ('{Id}','{Name}','{Address}')");
     }
 }

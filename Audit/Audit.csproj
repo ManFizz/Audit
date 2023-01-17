@@ -9,6 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="C1.Xaml.WPF.DataGrid" Version="4.6.20223.777" />
+      <PackageReference Include="C1.Xaml.WPF.DataGrid.Filters" Version="4.6.20223.777" />
       <PackageReference Include="MySql.Data" Version="8.0.31" />
         <FrameworkReference Include="Microsoft.WindowsDesktop.App.Wpf" />
         <Compile Remove="Objects\DataGridCollection.cs" />

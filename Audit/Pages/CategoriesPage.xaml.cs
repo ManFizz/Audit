@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Audit.Objects;
 using MySql.Data.MySqlClient;
+using static System.Int32;
 
 namespace Audit.Pages;
 
@@ -14,53 +16,29 @@ public partial class CategoriesPage : Page
     public CategoriesPage()
     {
         InitializeComponent();
-        UpdateTable();
-    }
-
-    private void UpdateTable()
-    {
         var app = (App) Application.Current;
-        var query = "SELECT * FROM categories";
-        /*bool needAnd = false;
-        var id =  MySqlHelper.EscapeString(idSearch.Text);
-        var name =  MySqlHelper.EscapeString(NameSearch.Text);
-        var payment =  MySqlHelper.EscapeString(PaymentSearch.Text);
-        if(string.IsNullOrEmpty(id+name+payment))
-            query += $"WHERE ";
-
-        if (!string.IsNullOrEmpty(id))
-        {
-            query += $"WHERE id = \"{id}\" ";
-            needAnd = true;
-        }
-        
-        if (!string.IsNullOrEmpty(name))
-        {
-            query += (needAnd ? "AND " : "") + $"name = \"{name}\" ";
-            needAnd = true;
-        }
-        
-        if (!string.IsNullOrEmpty(payment))
-            query += (needAnd ? "AND " : "") + $"payment = \"{payment}\" ";*/
-        
-        var mysqlCmd = new MySqlCommand(query, app.DbCon);
-        app.DbCon.Open();
-        var result = mysqlCmd.ExecuteReader();
-        app.ArrCategories.Clear();
-        while (result.Read())
-        {
-            app.ArrCategories.Add(new Category(result.GetInt32(0),result.GetString(1),result.GetInt32(2)));
-        }
         CategoriesGrid.ItemsSource = app.ArrCategories;
-        app.DbCon.Close();
+        app.LastDataGrid = CategoriesGrid;
+        if (app.ActiveUser.Type != TypeUser.hr)
+        {
+            IdSearch.Visibility = Visibility.Collapsed;
+            (IdSearch.Parent as Grid)!.ColumnDefinitions[0].Width = new GridLength(0);
+            CategoriesGrid.Columns[0].Visibility = Visibility.Collapsed;
+            
+            CategoriesGrid.Columns[1].IsReadOnly = true;
+            CategoriesGrid.Columns[2].IsReadOnly = true;
+            CategoriesGrid.CanUserAddRows = false;
+        }
     }
+
 
     private readonly ObservableCollection<Category> _arr = new ();
     private void Search_OnTextChanged(object sender, TextChangedEventArgs e)
     {
         //TODO Optimizations https://stackoverflow.com/questions/13815607/find-a-record-in-wpf-datagrid-by-typing
-        PaymentSearch.Foreground = Brushes.Black;
-        IdSearch.Foreground = Brushes.Black;
+        _arr.Clear();
+        PaymentSearch.Foreground = Brushes.White;
+        IdSearch.Foreground = Brushes.White;
         
         var app = (App) Application.Current;
         if (string.IsNullOrWhiteSpace(IdSearch.Text + NameSearch.Text + PaymentSearch.Text))
@@ -68,13 +46,12 @@ public partial class CategoriesPage : Page
             CategoriesGrid.ItemsSource = app.ArrCategories;
             return;
         }
+        CategoriesGrid.ItemsSource = _arr;
         
-        _arr.Clear();
         var id = -1;
-        if (!string.IsNullOrWhiteSpace(IdSearch.Text) && !int.TryParse(IdSearch.Text, out id))
+        if (!string.IsNullOrWhiteSpace(IdSearch.Text) && !TryParse(IdSearch.Text, out id))
         {
             IdSearch.Foreground = Brushes.Red;
-            CategoriesGrid.ItemsSource = _arr;
             return;
         }
         var sId = id.ToString();
@@ -82,15 +59,13 @@ public partial class CategoriesPage : Page
         var name = NameSearch.Text;
 
         var payment = -1;
-        if (!string.IsNullOrWhiteSpace(PaymentSearch.Text) && !int.TryParse(PaymentSearch.Text, out payment))
+        if (!string.IsNullOrWhiteSpace(PaymentSearch.Text) && !TryParse(PaymentSearch.Text, out payment))
         {
             PaymentSearch.Foreground = Brushes.Red;
-            CategoriesGrid.ItemsSource = _arr;
             return;
         }
 
         var sPayment = payment.ToString();
-        
         foreach (var c in app.ArrCategories)
         {
             if (id != -1 && !c.Id.ToString().Contains(sId))
@@ -104,35 +79,149 @@ public partial class CategoriesPage : Page
             
             _arr.Add(c);
         }
-
-        CategoriesGrid.ItemsSource = _arr;
     }
 
     private void Grid_PreviewCanExecute(object sender, CanExecuteRoutedEventArgs e)
     {
-        var grid = (DataGrid)sender;
         if (e.Command != DataGrid.DeleteCommand)
             return;
         
-        //if (MessageBox.Show($"Would you like to delete {((Category)grid.SelectedItem).Name}", "Confirm Delete", MessageBoxButton.OKCancel) != MessageBoxResult.OK)
-        //  e.Handled = true;
-        var c = (Category) grid.SelectedItem;
-        c.Remove();
         e.Handled = true;
+        
+        ((sender as DataGrid)!.SelectedItem as Category)!.Remove();
+        _isFull = false;
     }
-
+    
+    private bool _inEditNewItemMode;
+    private Category _lastItem;
+    private bool _isFull;
+    private bool SkipNextSelect;
     private void CategoriesGrid_OnAddingNewItem(object? sender, AddingNewItemEventArgs e)
     {
         if (e.NewItem != null)
             return;
         
-        var c = new Category(-1, "Name", -1);
-        c.SetUniqueId();
-        c.SetUniquePayment();
-        c.SetUniqueName();
-        e.NewItem = c;
+        try
+        {
+            _lastItem = new Category(-1, "", 0);
+        } catch (Exception exception) {
+            MessageBox.Show(exception.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
+            _isFull = true;
+            return;
+        }
+
+        _inEditNewItemMode = true;
+        e.NewItem = _lastItem;
+        SkipNextSelect = true;
+    }
+
+    private bool _isFieldNameOk;
+    private bool _isFieldPaymentOk;
+    private bool _isInEditCell;
+    private bool _termianteCellEdit;
+    private void CategoriesGrid_OnCellEditEnding(object? sender, DataGridCellEditEndingEventArgs e)
+    {
+        if (_termianteCellEdit)
+        {
+            _isInEditCell = false;
+            return;
+        }
+
+        if (e.EditAction != DataGridEditAction.Commit)
+        {
+            if (_inEditNewItemMode)
+            {
+                if (e.Column == CategoriesGrid.Columns[1])
+                    _isFieldNameOk = false;
+                else if (e.Column == CategoriesGrid.Columns[2])
+                    _isFieldPaymentOk = false;
+            }
+            _isInEditCell = false;
+            return;
+        }
+
+        try {
+            if (e.Column == CategoriesGrid.Columns[1])
+            {
+                ((Category) CategoriesGrid.SelectedItem).CheckName(((TextBox) e.EditingElement).Text);
+                _isFieldNameOk = true;
+            }
+            else if (e.Column == CategoriesGrid.Columns[2])
+            {
+                var sPayment = ((TextBox) e.EditingElement).Text;
+                if (!TryParse(sPayment, out var payment))
+                    throw new Exception("Ожидалось целое число");
+                
+                ((Category) CategoriesGrid.SelectedItem).CheckPayment(payment);
+                _isFieldPaymentOk = true;
+            }
+
+            _isInEditCell = false;
+        }
+        catch (Exception exception)
+        {
+            e.Cancel = true;
+            MessageBox.Show(exception.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
+        }
+    }
+    
+    private void CategoriesGrid_OnRowEditEnding(object? sender, DataGridRowEditEndingEventArgs e)
+    {
+        if (!_inEditNewItemMode) 
+            return;
+        
+        if (!_isFieldPaymentOk || !_isFieldNameOk)
+        {
+            if (e.EditAction == DataGridEditAction.Commit && !_termianteCellEdit)
+            {
+                e.Cancel = true;
+                return;
+            }
+            
+            //_lastItem.Remove(); //never return false
+        }
+        else
+        {
+            _lastItem.Insert();
+        }
+        _isFieldPaymentOk = _isFieldNameOk = false;
+        _inEditNewItemMode = false;
+        _termianteCellEdit = false;
+        _isInEditCell = false;
+    }
+
+    private void CategoriesGrid_OnSelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
+    {
+        if (!_inEditNewItemMode || SkipNextSelect)
+        {
+            SkipNextSelect = false;
+            return;
+        }
+
+        _termianteCellEdit = true;
+        var cc = CategoriesGrid.CurrentCell;
+        foreach (var col in CategoriesGrid.Columns)
+        {
+            CategoriesGrid.CurrentCell = new DataGridCellInfo(_lastItem, col);
+            CategoriesGrid.CancelEdit();
+        }
+        CategoriesGrid.CurrentCell = cc;
+        _isInEditCell = false;
+    }
+
+    private void CategoriesGrid_OnPreparingCellForEdit(object? sender, DataGridPreparingCellForEditEventArgs e)
+    {
+        if (_isInEditCell)
+            CategoriesGrid.CancelEdit();
+        _isInEditCell = true;
+    }
+
+    private void CategoriesGrid_OnInitializingNewItem(object sender, InitializingNewItemEventArgs e)
+    {
+        if (!_isFull)
+            return;
         
         var app = (App) Application.Current;
-        app.FastQuery($"INSERT INTO categories (id, name, payment) VALUES ('{c.Id}','{c.Name}',{c.Payment})");
+        app.ArrCategories.Remove((Category)e.NewItem);
     }
 }

@@ -1,92 +1,212 @@
-﻿namespace Audit.Objects;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Windows;
 
-public class User
+namespace Audit.Objects;
+
+public class User : BaseObject
 {
-    public enum TypeUser {
-        Worker = 0,
-        Hr,
-        Timekeeper,
-        Bookkeeper
-    }
-    
-    private int _id;
-    private string _login;
-    private string _password;
-    private int _idWroker;
-    private TypeUser _type;
 
-    public User(int id, string login, string password, int idWroker, TypeUser type)
+    public User(int id, string login, string password, int? idWroker, TypeUser type)
     {
-        _id = id;
+        Id = id > -1 ? id : GetUniqueId();
         _login = login;
         _password = password;
-        _idWroker = idWroker;
+        _workerId = idWroker ?? -1;
         _type = type;
     }
-
-    public User(string login, string password, int idWroker, TypeUser type)
-    {
-        _id = -1;
-        SetLogin(login);
-        SetPassword(password);
-        SetIdWorker(idWroker);
-        SetTypeUser(type);
-    }
     
-    //Page constructor --- DON'T USE
-    public User()
-    {
-    }
+    [EditorBrowsable(EditorBrowsableState.Never)] [Obsolete("Constuctor created for dataGrid", true)]
+    public User() {}
+    
+    #region Id
+    private const int MaxId = 99999;
 
-    public int Id
+    public int Id { get; }
+    
+    private static int GetUniqueId()
     {
-        get => _id; 
-        set => SetId(value);
-    }
+        var id = ArrUsers.Select(c => c.Id).Prepend(-1).Max() + 1;
+        if (id > MaxId)
+        {
+            id = 1;
+            while (ArrWorkers.Any(c => c.Id == id))
+                id++;
+            
+            if(id > MaxId)
+                throw new Exception("Таблица категорий заполнена, удалите не нужные записи");
+        }
 
-    private void SetId(int id)
-    {
-        _id = id;
+        return id;
     }
+    #endregion
+    
+    #region Login
+    private const int MinLengthLogin = 3;
+    private const int MaxLengthLogin= 32;
+    private const string LoginCharacters = " qwertyuiopasdfghjklzxcvvbnmйцукенгшщзххъфывапрролджэячсмитььбюёQWERTYUIOPASDFGHJKLZXCCVBNMЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬЁ01234567890_";
+    private string _login;
     
     public string Login
     {
-        get => _login; 
-        set => SetLogin(value);
+        get => _login;
+        set
+        {
+            try
+            {
+                CheckLogin(value);
+                
+                app.FastQuery($"UPDATE users SET login = '{value}' WHERE id = {Id};");
+                _login = value;
+                NotifyPropertyChanged(nameof(Login));
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
+            }
+        }
     }
-    private void SetLogin(string login)
+
+    public static void CheckLogin(string value)
     {
-        _login = login;
+        if (value.Length < MinLengthLogin)
+            throw new Exception($"Логин должен содержать минимум {MinLengthLogin} символов");
+        
+        if (value.Length > MaxLengthLogin)
+            throw new Exception($"Логин должен содержать максимум {MaxLengthLogin} символов");
+            
+        if (value.Any(t => LoginCharacters.All(c => t != c)))
+            throw new Exception($"Логин содержит недопустимые символы - '{value.First(t => LoginCharacters.All(c => t != c))}'");
     }
+    #endregion
+    
+    #region Password
+    private const int MinLengthPassword = 3;
+    private const int MaxLengthPassword = 32;
+    private const string PasswordCharacters = "qwertyuiopasdfghjklzxcvvbnmйцукенгшщзххъфывапрролджэячсмитььбюёQWERTYUIOPASDFGHJKLZXCCVBNMЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬЁ01234567890_";
+    private string _password;
     
     public string Password
     {
         get => _password; 
-        set => SetPassword(value);
+        set
+        {
+            try
+            {
+                CheckPassword(value);
+                
+                app.FastQuery($"UPDATE users SET password = '{value}' WHERE id = {Id};");
+                _password = value;
+                NotifyPropertyChanged(nameof(Password));
+            } catch (Exception e) {
+                MessageBox.Show(e.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
+            }
+        }
     }
-    private void SetPassword(string password)
+    public static void CheckPassword(string value)
     {
-        _password = password;
+        if (value.Length < MinLengthPassword)
+            throw new Exception($"Пароль должен содержать минимум {MinLengthLogin} символов");
+        
+        if (value.Length > MaxLengthPassword)
+            throw new Exception($"Пароль должен содержать максимум {MaxLengthLogin} символов");
+            
+        if (value.Any(t => PasswordCharacters.All(c => t != c)))
+            throw new Exception($"Пароль содержит недопустимые символы - '{value.First(t => LoginCharacters.All(c => t != c))}'");
+    }
+    #endregion
+    
+    #region WorkerId
+    private int _workerId;
+    public string WorkerName
+    {
+        get
+        {
+            var worker = app.ArrWorkers.FirstOrDefault(c => c.Id == _workerId);
+            return worker == null ? "" : worker.Name;
+        }
     }
     
-    public int IdWorker
+    public int WorkerId
     {
-        get => _idWroker; 
-        set => SetIdWorker(value);
+        get => _workerId; 
+        set
+        {
+            try
+            {
+                CheckWorkerId(value);
+                var sIdW = WorkerId == -1 ? "null" : WorkerId.ToString();
+                app.FastQuery($"UPDATE users SET worker_id = {sIdW} WHERE id = {Id};");
+                _workerId = value;
+                NotifyPropertyChanged(nameof(WorkerId));
+                NotifyPropertyChanged(nameof(WorkerName));
+            } catch (Exception e) {
+                MessageBox.Show(e.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
+            }
+        }
     }
-    private void SetIdWorker(int idWorker)
+
+    public void CheckWorkerId(int value)
     {
-        _idWroker = idWorker;
+        if (Type is TypeUser.worker && value == -1)
+            throw new Exception("Нельзя удалить привязку сотрудниика при статусе \"Сотрудник\"");
+        
+        if (value != -1 && ArrWorkers.All(c => c.Id != value))
+            throw new Exception("Заданного сотрудника не существует");
     }
+    #endregion
+    
+    #region Type
+    private TypeUser _type;
     
     public TypeUser Type
     {
         get => _type; 
-        set => SetTypeUser(value);
+        set
+        {
+            try
+            {
+                CheckTypeUser(value);
+                    
+                app.FastQuery($"UPDATE users SET type = '{value}' WHERE id = {Id};");
+                _type = value;
+                NotifyPropertyChanged(nameof(Type));
+            } catch (Exception e) {
+                MessageBox.Show(e.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
+            }
+        }
     }
     
-    private void SetTypeUser(TypeUser type)
+    public void CheckTypeUser(TypeUser value)
     {
-        _type = type;
+        if(value is TypeUser.worker && WorkerId == -1)
+            throw new Exception("Нельзя установить статус \"Cотрудник\" без привязки самого сотрудника");
+    }
+    #endregion
+    
+    public bool Remove()
+    {
+        return Remove(this);
+    }
+
+    private static bool Remove(User user)
+    {
+        if (app.ActiveUser.Id == user.Id)
+        {
+            MessageBox.Show("Нельзя удалить текущего пользователя", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
+            return false;
+        }
+        
+        app.FastQuery($"DELETE FROM users WHERE id = {user.Id}");
+        app.ArrCategories.Remove(app.ArrCategories.First(c => c.Id == user.Id));
+        return true;
+    }
+
+    public void Insert()
+    {
+        var sIdW = WorkerId == -1 ? "null" : WorkerId.ToString();
+        app.FastQuery($"INSERT INTO users (id, login, password, worker_id, type) VALUES ({Id},'{Login}','{Password}', {sIdW},'{Type}')");
     }
 }

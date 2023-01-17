@@ -18,9 +18,10 @@ namespace Audit
             this.WindowStyle+=2;
         }
 
-        private readonly MainWindow? _mainWindow = null;
+        private readonly MainWindow? _mainWindow;
         public LogInWindow(MainWindow? mainWindow)
         {
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
             _mainWindow = mainWindow;
         }
@@ -34,8 +35,7 @@ namespace Audit
                 return;
             
             _shown = true;
-            if(_mainWindow != null)
-                _mainWindow.Close();
+            _mainWindow?.Close();
         }
 
         private void LogInButton_Click(object sender, RoutedEventArgs e)
@@ -45,6 +45,7 @@ namespace Audit
             var password = MySqlHelper.EscapeString(Password.Password);
             if (!IsValidPassword(login) || !IsValidLogin(password))
                 return;
+            
             var mysqlCmd = new MySqlCommand($"SELECT id, worker_id, type FROM users WHERE login='{login}' AND password='{password}'", app.DbCon);
             app.DbCon.Open();
             var reader = mysqlCmd.ExecuteReader();
@@ -56,21 +57,29 @@ namespace Audit
                 return;
             }
 
-            Enum.TryParse(reader.GetString(2), false, out User.TypeUser type);
-            app.ActiveUser = new User(reader.GetInt32(0), login, password, reader.GetInt32(1), type);
+            Enum.TryParse(reader.GetString(2), false, out TypeUser type);
+            int? idWorker = reader.IsDBNull(1) ? null : reader.GetInt32(1);
+            app.ActiveUser = new User(reader.GetInt32(0), login, password, idWorker, type);
             reader.Close();
             app.DbCon.Close();
 
-
-            var window = new MainWindow(this);
+            Hide();
+            var window = new MainWindow(this)
+            {
+                WindowStartupLocation = WindowStartupLocation.CenterScreen
+            };
             window.Show();
             //this.Close(); //ERROR Display mainwindow - fix by constructor mainwindow
         }
 
         private static bool IsValidLogin(string login)
         {
-            if (login.Length is < 6 or > 32)
-                return false;
+            try
+            {
+                User.CheckLogin(login);
+            } catch (Exception e) {
+                MessageBox.Show(e.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
+            }
             
             return true;
         }

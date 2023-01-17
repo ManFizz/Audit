@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       mc:Ignorable="d"
       Title="CompanyPage" MinHeight="200" MinWidth="400">
+    
     <Grid Background="#1C1C1C">
         <Grid.Resources>
             <Style TargetType="TextBox">
@@ -75,10 +76,28 @@
         <DataGrid x:Name="CompanyGrid" x:FieldModifier="public" AutoGenerateColumns="False" Grid.Row="1" Background="#1C1C1C" CanUserReorderColumns="False"
                   CanUserResizeColumns="False" CanUserResizeRows="False" CanUserDeleteRows="True" CanUserAddRows="True" SelectionMode="Single"
                   CommandManager.PreviewCanExecute="CompanyGrid_OnPreviewCanExecute" HeadersVisibility="Column" Margin="5" AlternatingRowBackground="#333333" 
-                  AddingNewItem="CompanyGrid_OnAddingNewItem">
+                  AddingNewItem="CompanyGrid_OnAddingNewItem" CellEditEnding="CompanyGrid_OnCellEditEnding" RowEditEnding="CompanyGrid_OnRowEditEnding"
+                  PreparingCellForEdit="CompanyGrid_OnPreparingCellForEdit" SelectedCellsChanged="CompanyGrid_OnSelectedCellsChanged"
+                  InitializingNewItem="CompanyGrid_OnInitializingNewItem">
             <DataGrid.Resources>
                 <Style TargetType="DataGridCell">
                     <Setter Property="Foreground" Value="White"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="#5A5A5A" />
+                            <Setter Property="BorderBrush"
+                                    Value="Transparent" />
+                            <Setter Property="BorderThickness"
+                                    Value="1" />
+                        </Trigger>
+                        <Trigger Property="IsEditing" Value="True">
+                            <Setter Property="Background" Value="#3A3A3A" />
+                            <Setter Property="BorderBrush"
+                                    Value="White" />
+                            <Setter Property="BorderThickness"
+                                    Value="1" />
+                        </Trigger>
+                    </Style.Triggers>
                 </Style>
                 
                 <Style TargetType="{x:Type DataGrid}">
@@ -102,9 +121,9 @@
             </DataGrid.Resources>
             
             <DataGrid.Columns>
-                <DataGridTextColumn Header="№"  Binding="{Binding Path=Id}" Width="Auto" />
-                <DataGridTextColumn Header="Название" Binding="{Binding Path=Name}" Width="2*" MaxWidth="400" />
-                <DataGridTextColumn Header="Адресс" Binding="{Binding Path=Address}" Width="3*" MaxWidth="600" />
+                <DataGridTextColumn Header="№"  Binding="{Binding Path=Id}" Width="Auto" IsReadOnly="True" />
+                <DataGridTextColumn Header="Название" Binding="{Binding Path=Name}" Width="Auto" MaxWidth="400" />
+                <DataGridTextColumn Header="Адресс" Binding="{Binding Path=Address}" Width="Auto" MaxWidth="600" />
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
