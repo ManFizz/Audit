@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Media;
 using MySqlX.XDevAPI.Relational;
 
 namespace Audit.Pages;
@@ -11,7 +12,9 @@ public partial class Report : Page
     public Report()
     {
         InitializeComponent();
-        
+
+        var megaTotalH = 0;
+        var megaTotalP = 0;
         var app = (App) Application.Current;
         foreach (var company in app.ArrCompany)
         {
@@ -53,25 +56,75 @@ public partial class Report : Page
                 
                 group.Rows.Add(row);
             }
+
+            if (group.Rows.Count == 0)
+                continue;
             
             var newRow = new TableRow();
+            newRow.Cells.Add(new TableCell(
+                new Paragraph() {
+                Inlines = { "Итог по компании:" }
+                }) {
+                ColumnSpan = 6,
+                BorderThickness = new Thickness(0,0,0,0)
+            });
+            group.Rows.Add(newRow);
+            newRow = new TableRow();
             
             var paragraph = new Paragraph();
             paragraph.Inlines.Add(company.Name);
             newRow.Cells.Add(new TableCell(paragraph) {
-                ColumnSpan = 4
+                ColumnSpan = 4,
+                BorderBrush = Brushes.DarkGray,
+                BorderThickness = new Thickness(0, 0, 0, 3)
             });
             
             paragraph = new Paragraph();
             paragraph.Inlines.Add(totalHours.ToString());
-            newRow.Cells.Add(new TableCell(paragraph));
+            newRow.Cells.Add(new TableCell(paragraph) {
+                BorderBrush = Brushes.DarkGray,
+                BorderThickness = new Thickness(0, 0, 0, 3)
+            });
                 
             paragraph = new Paragraph();
             paragraph.Inlines.Add(totalPayment.ToString());
-            newRow.Cells.Add(new TableCell(paragraph));
+            newRow.Cells.Add(new TableCell(paragraph) {
+                BorderBrush = Brushes.DarkGray,
+                BorderThickness = new Thickness(0, 0, 0, 3)
+            });
+
             
             group.Rows.Add(newRow);
             Table.RowGroups.Add(group);
+            megaTotalH += totalHours;
+            megaTotalP += totalPayment;
         }
+
+        var resultRow = new TableRow();
+            
+        var pr = new Paragraph();
+        pr.Inlines.Add("Итого");
+        resultRow.Cells.Add(new TableCell(pr) {
+            ColumnSpan = 4,
+            BorderBrush = Brushes.Black,
+            BorderThickness = new Thickness(0, 0, 0, 3)
+        });
+        
+        pr = new Paragraph();
+        pr.Inlines.Add(megaTotalH.ToString());
+        resultRow.Cells.Add(new TableCell(pr) {
+            BorderBrush = Brushes.Black,
+            BorderThickness = new Thickness(0, 0, 0, 3)
+        });
+        
+        pr = new Paragraph();
+        pr.Inlines.Add(megaTotalP.ToString());
+        resultRow.Cells.Add(new TableCell(pr) {
+            BorderBrush = Brushes.Black,
+            BorderThickness = new Thickness(0, 0, 0, 3)
+        });
+        var gp = new TableRowGroup();
+        gp.Rows.Add(resultRow);
+        Table.RowGroups.Add(gp);
     }
 }
