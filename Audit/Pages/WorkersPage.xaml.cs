@@ -21,7 +21,7 @@ public partial class WorkersPage : Page
         WorkersGrid.ItemsSource = app.ArrWorkers;
         app.LastDataGrid = WorkersGrid;
         
-        if (app.ActiveUser.Type != TypeUser.hr)
+        if (app.ActiveUser.Type is not (TypeUser.hr or TypeUser.admin))
         {
             var gridSearch = (IdSearch.Parent as Grid)!;
             WorkersGrid.CanUserAddRows = false;

@@ -8,7 +8,7 @@
         Title="Вход в аккаунт" Height="170" Width="350" MaxWidth="350" MinWidth="400" MinHeight="170" MaxHeight="170" Background="#1C1C1C">
     <StackPanel Margin="10">
         <TextBlock TextAlignment="Center"  Foreground="White">Login</TextBlock>
-        <TextBox x:Name="Login" Width="250" Background="#292929"  Foreground="White" Padding="2">Amogus77</TextBox>
+        <TextBox x:Name="Login" Width="250" Background="#292929"  Foreground="White" Padding="2">ManFis</TextBox>
         <TextBlock TextAlignment="Center"  Foreground="White" >Password</TextBlock>
         <PasswordBox x:Name="Password" Background="#292929" Width="250" Foreground="White" Padding="2" Password="123456"/>
         <Button Click="LogInButton_Click" Width="80" Content="Войти" />

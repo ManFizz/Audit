@@ -42,7 +42,7 @@ public class Company : BaseObject
     
     #region Name
     private const int MinLengthName = 6;
-    private const int MaxLengthName = 100;
+    private const int MaxLengthName = 64;
     private const string NameCharacters = " qwertyuiopasdfghjklzxcvvbnmйцукенгшщзххъфывапрролджэячсмитььбюёQWERTYUIOPASDFGHJKLZXCCVBNMЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬЁ1234567890";
     private string _name;
     
@@ -81,7 +81,7 @@ public class Company : BaseObject
 
     #region Address
     private const int MinLengthAddress = 6;
-    private const int MaxLengthAddress  = 100;
+    private const int MaxLengthAddress  = 128;
     private const string AddressCharacters = " qwertyuiopasdfghjklzxcvvbnmйцукенгшщзххъфывапрролджэячсмитььбюёQWERTYUIOPASDFGHJKLZXCCVBNMЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬЁ.,!?1234567890";
     private string _address;
     

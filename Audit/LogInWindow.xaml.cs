@@ -64,12 +64,12 @@ namespace Audit
             app.DbCon.Close();
 
             Hide();
-            var window = new MainWindow(this)
+            var window = new MainWindow()
             {
                 WindowStartupLocation = WindowStartupLocation.CenterScreen
             };
-            window.Show();
-            //this.Close(); //ERROR Display mainwindow - fix by constructor mainwindow
+            window.ShowDialog();
+            Close();
         }
 
         private static bool IsValidLogin(string login)
@@ -79,6 +79,7 @@ namespace Audit
                 User.CheckLogin(login);
             } catch (Exception e) {
                 MessageBox.Show(e.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
+                return false;
             }
             
             return true;
@@ -86,8 +87,13 @@ namespace Audit
 
         private static bool IsValidPassword(string password)
         {
-            if (password.Length is < 6 or > 32)
+            try
+            {
+                User.CheckPassword(password);
+            } catch (Exception e) {
+                MessageBox.Show(e.Message, "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
                 return false;
+            }
             
             return true;
         }

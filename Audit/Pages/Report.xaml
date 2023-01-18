@@ -5,13 +5,29 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Audit.Pages"
       mc:Ignorable="d"
-      Title="Report" MinHeight="200" MinWidth="400">
-    <Table Background="#1C1C1C">
-        <Table.Resources>
-            <Style TargetType="TableCell">
-                <Setter Property="Background" Value="#292929"/>
-                <Setter Property="Foreground" Value="White"/>
-            </Style>
-        </Table.Resources>
-    </Table>
+      Title="Report" MinHeight="200" MinWidth="700">
+    <FlowDocument Background="#1C1C1C" MinPageWidth="660">
+        <Table Background="#1C1C1C"  x:Name="Table" CellSpacing="0">
+                <Table.Resources>
+                    <Style TargetType="TableCell">
+                        <Setter Property="Background" Value="#292929"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="Padding" Value="5"/>
+                        <Setter Property="BorderBrush" Value="#000"/>
+                        <Setter Property="BorderThickness" Value="1"/>
+                        <Setter Property="FontSize" Value="16"/>
+                    </Style>
+                </Table.Resources>
+                <TableRowGroup FontWeight="Bold" Background="#343434">
+                    <TableRow>
+                        <TableCell TextAlignment="Center" FontSize="10"><Paragraph>ФИО</Paragraph></TableCell>
+                        <TableCell TextAlignment="Center" FontSize="10"><Paragraph>Категория</Paragraph></TableCell>
+                        <TableCell TextAlignment="Center" FontSize="10"><Paragraph>Ставка за 1 ч, руб.</Paragraph></TableCell>
+                        <TableCell TextAlignment="Center" FontSize="10"><Paragraph>Дата выполнения работы</Paragraph></TableCell>
+                        <TableCell TextAlignment="Center" FontSize="10"><Paragraph>Количество отработанных часов</Paragraph></TableCell>
+                        <TableCell TextAlignment="Center" FontSize="10"><Paragraph>Начислено за выполненную работу, руб.</Paragraph></TableCell>
+                    </TableRow>
+                </TableRowGroup>
+        </Table>
+        </FlowDocument>
 </Page>

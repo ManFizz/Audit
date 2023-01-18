@@ -6,11 +6,9 @@ namespace Audit;
 
 public partial class MainWindow : Window
 {
-    private readonly LogInWindow _logInWindow;
-    public MainWindow(LogInWindow logInWindow)
+    public MainWindow()
     {
         InitializeComponent();
-        _logInWindow = logInWindow;
         var app = (App) Application.Current;
         if (app.ActiveUser == null)
             throw new Exception("Empty user");
@@ -22,9 +20,14 @@ public partial class MainWindow : Window
             BtnWorkers.Visibility = Visibility.Collapsed;
         }
         
-        if (app.ActiveUser.Type != TypeUser.hr)
+        if (app.ActiveUser.Type is not (TypeUser.hr or TypeUser.admin))
         {
             BtnUsers.Visibility = Visibility.Collapsed;
+        }
+
+        if (app.ActiveUser.Type is not (TypeUser.bookkeeper or TypeUser.admin))
+        {
+            BtnReport.Visibility = Visibility.Collapsed;
         }
     }
 
@@ -36,6 +39,7 @@ public partial class MainWindow : Window
         BtnUsers.FontWeight = FontWeights.Normal;
         BtnHoursRecords.FontWeight = FontWeights.Normal;
         BtnWorkers.FontWeight = FontWeights.Normal;
+        BtnReport.FontWeight = FontWeights.Normal;
         
         btn.FontWeight = FontWeights.Bold;
     }
@@ -69,6 +73,11 @@ public partial class MainWindow : Window
         CenterFrame.Source = new Uri("Pages/UsersPage.xaml", UriKind.Relative);
         ClearStyleBtns(BtnUsers);
     }
+    private void OnClick_BtnNavReport(object sender, RoutedEventArgs e)
+    {
+        CenterFrame.Source = new Uri("Pages/Report.xaml", UriKind.Relative);
+        ClearStyleBtns(BtnReport);
+    }
 
     private void Exit(object sender, RoutedEventArgs e)
     {
@@ -76,7 +85,8 @@ public partial class MainWindow : Window
         app.ActiveUser = null;
 
         Hide();
-        _logInWindow.Show();
+        var logInWindow = new LogInWindow();
+        logInWindow.Show();
         Close();
     }
 }

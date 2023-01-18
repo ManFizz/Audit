@@ -6,5 +6,6 @@ public enum TypeUser {
     worker = 0,
     hr,
     timekeeper,
-    bookkeeper
+    bookkeeper,
+    admin
 }

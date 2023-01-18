@@ -42,7 +42,7 @@ public class Category : BaseObject
     
     #region Name
     private const int MinLengthName = 6;
-    private const int MaxLengthName = 100;
+    private const int MaxLengthName = 64;
     private const string NameCharacters = " qwertyuiopasdfghjklzxcvvbnmйцукенгшщзххъфывапрролджэячсмитььбюёQWERTYUIOPASDFGHJKLZXCCVBNMЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬЁ";
     private string _name;
     public string Name

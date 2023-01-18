@@ -47,8 +47,9 @@ public class Worker : BaseObject
     
     #region Name
     private const int MinLengthName = 6;
-    private const int MaxLengthName = 100;
+    private const int MaxLengthName = 64;
     private const string NameCharacters = " qwertyuiopasdfghjklzxcvvbnmйцукенгшщзххъфывапрролджэячсмитььбюёQWERTYUIOPASDFGHJKLZXCCVBNMЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬЁ";
+    private static readonly Regex RegexName = new("^[A-ZА-Я][a-zа-я]+ [A-ZА-Я][a-zа-я]+( [A-ZА-Я][a-zа-я]+)?$");
     private string _name;
 
     public string Name
@@ -78,6 +79,9 @@ public class Worker : BaseObject
             
         if (value.Any(t => NameCharacters.All(c => t != c)))
             throw new Exception($"ФИО содержит недопустимые символы - '{value.First(t => NameCharacters.All(c => t != c))}'");
+        
+        if(!RegexName.Match(value).Success)
+            throw new Exception("ФИО не соответствует формату");
     }
     #endregion
 

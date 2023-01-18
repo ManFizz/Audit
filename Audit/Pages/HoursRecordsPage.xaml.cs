@@ -20,7 +20,7 @@ public partial class HoursRecordsPage : Page
         HoursRecordsGrid.ItemsSource = app.ArrHoursRecords;
         app.LastDataGrid = HoursRecordsGrid;
         
-        if (app.ActiveUser.Type != TypeUser.timekeeper)
+        if (app.ActiveUser.Type is not (TypeUser.timekeeper or TypeUser.admin))
         {
             var gridSearch = (IdSearch.Parent as Grid)!;
             IdSearch.Visibility = Visibility.Collapsed;

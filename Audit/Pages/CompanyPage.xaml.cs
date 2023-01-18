@@ -16,7 +16,7 @@ public partial class CompanyPage : Page
         var app = (App) Application.Current;
         CompanyGrid.ItemsSource = app.ArrCompany;
         app.LastDataGrid = CompanyGrid;
-        if (app.ActiveUser.Type is not (TypeUser.timekeeper or TypeUser.hr))
+        if (app.ActiveUser.Type is not (TypeUser.timekeeper or TypeUser.hr or TypeUser.admin))
         {
             var gridSearch = (IdSearch.Parent as Grid)!;
             

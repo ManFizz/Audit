@@ -19,7 +19,7 @@ public partial class CategoriesPage : Page
         var app = (App) Application.Current;
         CategoriesGrid.ItemsSource = app.ArrCategories;
         app.LastDataGrid = CategoriesGrid;
-        if (app.ActiveUser.Type != TypeUser.hr)
+        if (app.ActiveUser.Type is not (TypeUser.hr or TypeUser.admin))
         {
             IdSearch.Visibility = Visibility.Collapsed;
             (IdSearch.Parent as Grid)!.ColumnDefinitions[0].Width = new GridLength(0);
