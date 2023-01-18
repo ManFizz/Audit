@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using Audit.Objects;
@@ -30,47 +31,16 @@ public partial class CompanyPage : Page
         }
     }
 
-    private readonly ObservableCollection<Company> _arr = new ();
     private void Search_OnTextChanged(object sender, TextChangedEventArgs e)
     {
-        IdSearch.Foreground = Brushes.White;
-        
         var app = (App) Application.Current;
-        if (string.IsNullOrWhiteSpace(IdSearch.Text + NameSearch.Text + AddressSearch.Text))
-        {
-            CompanyGrid.ItemsSource = app.ArrCompany;
-            return;
-        }
-        
-        _arr.Clear();
-        var id = -1;
-        if (!string.IsNullOrWhiteSpace(IdSearch.Text) && !int.TryParse(IdSearch.Text, out id))
-        {
-            IdSearch.Foreground = Brushes.Red;
-            CompanyGrid.ItemsSource = _arr;
-            return;
-        }
-        var sId = id.ToString();
-
-        var name = NameSearch.Text;
-        var address = AddressSearch.Text;
-        
-        
-        foreach (var c in app.ArrCompany)
-        {
-            if (id != -1 && !c.Id.ToString().Contains(sId))
-                continue;
-
-            if (!string.IsNullOrWhiteSpace(name) && !c.Name.Contains(name))
-                continue;
-            
-            if (!string.IsNullOrWhiteSpace(address) && !c.Address.Contains(address))
-                continue;
-            
-            _arr.Add(c);
-        }
-
-        CompanyGrid.ItemsSource = _arr;
+        var view = CollectionViewSource.GetDefaultView(app.ArrCompany);
+        view.Filter = o => {
+            var company = ((o as Company)!);
+            return (string.IsNullOrWhiteSpace(NameSearch.Text) || company.Name.Contains(NameSearch.Text))
+                   && (string.IsNullOrWhiteSpace(IdSearch.Text) || company.Id.ToString().Contains(IdSearch.Text))
+                   && (string.IsNullOrWhiteSpace(AddressSearch.Text) || company.Address.Contains(AddressSearch.Text));
+        };
     }
 
     private void CompanyGrid_OnPreviewCanExecute(object sender, CanExecuteRoutedEventArgs e)

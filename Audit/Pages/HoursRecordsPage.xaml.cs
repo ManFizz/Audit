@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using Audit.Objects;
@@ -48,89 +49,24 @@ public partial class HoursRecordsPage : Page
     }
     
 
-    private readonly ObservableCollection<HoursRecord> _arr = new ();
     private void Search_OnTextChanged(object sender, TextChangedEventArgs e)
     {
-        _arr.Clear();
-        IdSearch.Foreground = Brushes.White;
-        IdCompanySearch.Foreground = Brushes.White;
-        IdWorkerSearch.Foreground = Brushes.White;
-        DataSearch.Foreground = Brushes.White;
-        HoursSearch.Foreground = Brushes.White;
-        
         var app = (App) Application.Current;
-        if (app.ActiveUser.Type != TypeUser.worker 
-            || string.IsNullOrWhiteSpace(IdSearch.Text + IdCompanySearch.Text + IdWorkerSearch.Text + DataSearch.Text + HoursSearch.Text))
-        {
-            HoursRecordsGrid.ItemsSource = app.ArrHoursRecords;
-            return;
-        }
-        HoursRecordsGrid.ItemsSource = _arr;
-        
-        var id = -1;
-        if (!string.IsNullOrWhiteSpace(IdSearch.Text) && !int.TryParse(IdSearch.Text, out id))
-        {
-            IdSearch.Foreground = Brushes.Red;
-            return;
-        }
-        var sId = id.ToString();
-        
-        var idComp = -1;
-        if (!string.IsNullOrWhiteSpace(IdCompanySearch.Text) && !int.TryParse(IdCompanySearch.Text, out idComp))
-        {
-            IdCompanySearch.Foreground = Brushes.Red;
-            return;
-        }
-        var sIdComp = idComp.ToString();
-        
-        var idWork = -1;
+        int id;
         if (app.ActiveUser.Type == TypeUser.worker)
-            idWork = app.ActiveUser.Id;
-        else if (!string.IsNullOrWhiteSpace(IdWorkerSearch.Text) && !int.TryParse(IdWorkerSearch.Text, out idWork))
-        {
-            IdWorkerSearch.Foreground = Brushes.Red;
-            return;
-        }
-        var sIdWork = idWork.ToString();
-        
-        var regex = new Regex(@"[^0-9\.]+");
-        var matches = regex.Matches(DataSearch.Text);
-        if (matches.Count > 0)
-        {
-            DataSearch.Foreground = Brushes.Red;
-            return;
-        }
-        var sDt = DataSearch.Text.Trim();
-        
-        
-        var hours = -1;
-        if (!string.IsNullOrWhiteSpace(HoursSearch.Text) && !int.TryParse(HoursSearch.Text, out hours))
-        {
-            HoursSearch.Foreground = Brushes.Red;
-            return;
-        }
-        var sHours = hours.ToString();
-        
-        foreach (var hoursRecord in app.ArrHoursRecords)
-        {
-            if (id != -1 && !hoursRecord.Id.ToString().Contains(sId))
-                continue;
-            
-            if (idComp != -1 && !hoursRecord.CompanyId.ToString().Contains(sIdComp))
-                continue;
-            
-            if (idWork != -1 && !hoursRecord.WorkerId.ToString().Contains(sIdWork))
-                continue;
-            
-            if (!string.IsNullOrWhiteSpace(sDt) && !hoursRecord.Date.Contains(sDt))
-                continue;
-            
-            if (hours != -1 && !hoursRecord.Hours.ToString().Contains(sHours))
-                continue;
-
-
-            _arr.Add(hoursRecord);
-        }
+            id = app.ActiveUser.WorkerId;
+        else if (!int.TryParse(IdWorkerSearch.Text, out id))
+            id = -1;
+        var sId = id.ToString();
+        var view = CollectionViewSource.GetDefaultView(app.ArrHoursRecords);
+        view.Filter = o => {
+            var record = ((o as HoursRecord)!);
+            return (string.IsNullOrWhiteSpace(HoursSearch.Text) || record.Hours.ToString().Contains(HoursSearch.Text)) 
+                   && (string.IsNullOrWhiteSpace(IdSearch.Text) || record.Id.ToString().Contains(IdSearch.Text)) 
+                   && (id == -1 || record.WorkerId.ToString().Contains(sId)) 
+                   && (string.IsNullOrWhiteSpace(DataSearch.Text) || record.Date.Contains(DataSearch.Text)) 
+                   && (string.IsNullOrWhiteSpace(IdCompanySearch.Text) || record.CompanyId.ToString().Contains(IdCompanySearch.Text));
+        };
     }
 
     private bool _isFull;
@@ -166,7 +102,7 @@ public partial class HoursRecordsPage : Page
         _skipNextSelect = true;
     }
 
-    private bool[] _isFieldOk = {true, false, true, false, true, false, false};
+    private bool[] _isFieldOk = {true, false, true, false, true, true, true};
     private bool _isInEditCell;
     private void HoursRecordsGrid_OnCellEditEnding(object? sender, DataGridCellEditEndingEventArgs e)
     {
@@ -281,7 +217,7 @@ public partial class HoursRecordsPage : Page
             _lastItem.Insert();
         }
 
-        _isFieldOk = new [] {true, false, true, false, true, false, false};
+        _isFieldOk = new [] {true, false, true, false, true, true, true};
         
         _inEditNewItemMode = false;
         _termianteCellEdit = false;

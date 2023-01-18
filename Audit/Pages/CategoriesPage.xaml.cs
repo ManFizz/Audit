@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using Audit.Objects;
@@ -30,55 +31,17 @@ public partial class CategoriesPage : Page
             CategoriesGrid.CanUserAddRows = false;
         }
     }
-
-
-    private readonly ObservableCollection<Category> _arr = new ();
+    
     private void Search_OnTextChanged(object sender, TextChangedEventArgs e)
     {
-        //TODO Optimizations https://stackoverflow.com/questions/13815607/find-a-record-in-wpf-datagrid-by-typing
-        _arr.Clear();
-        PaymentSearch.Foreground = Brushes.White;
-        IdSearch.Foreground = Brushes.White;
-        
         var app = (App) Application.Current;
-        if (string.IsNullOrWhiteSpace(IdSearch.Text + NameSearch.Text + PaymentSearch.Text))
-        {
-            CategoriesGrid.ItemsSource = app.ArrCategories;
-            return;
-        }
-        CategoriesGrid.ItemsSource = _arr;
-        
-        var id = -1;
-        if (!string.IsNullOrWhiteSpace(IdSearch.Text) && !TryParse(IdSearch.Text, out id))
-        {
-            IdSearch.Foreground = Brushes.Red;
-            return;
-        }
-        var sId = id.ToString();
-
-        var name = NameSearch.Text;
-
-        var payment = -1;
-        if (!string.IsNullOrWhiteSpace(PaymentSearch.Text) && !TryParse(PaymentSearch.Text, out payment))
-        {
-            PaymentSearch.Foreground = Brushes.Red;
-            return;
-        }
-
-        var sPayment = payment.ToString();
-        foreach (var c in app.ArrCategories)
-        {
-            if (id != -1 && !c.Id.ToString().Contains(sId))
-                continue;
-
-            if (!string.IsNullOrWhiteSpace(name) && !c.Name.Contains(name))
-                continue;
-            
-            if (payment != -1 && !c.Payment.ToString().Contains(sPayment))
-                continue;
-            
-            _arr.Add(c);
-        }
+        var view = CollectionViewSource.GetDefaultView(app.ArrCategories);
+        view.Filter = o => {
+            var cat = ((o as Category)!);
+            return (string.IsNullOrWhiteSpace(NameSearch.Text) || cat.Name.Contains(NameSearch.Text)) 
+                   && (string.IsNullOrWhiteSpace(IdSearch.Text) || cat.Id.ToString().Contains(IdSearch.Text)) 
+                   && (string.IsNullOrWhiteSpace(PaymentSearch.Text) || cat.Payment.ToString().Contains(PaymentSearch.Text));
+        };
     }
 
     private void Grid_PreviewCanExecute(object sender, CanExecuteRoutedEventArgs e)

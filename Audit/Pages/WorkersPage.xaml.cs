@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using Audit.Objects;
@@ -36,78 +37,18 @@ public partial class WorkersPage : Page
         }
     }
 
-    private readonly ObservableCollection<Worker> _arr = new ();
     private void Search_OnTextChanged(object sender, TextChangedEventArgs e)
     {
-        _arr.Clear();
-        IdSearch.Foreground = Brushes.White;
-        PassportSearch.Foreground = Brushes.White;
-        DataSearch.Foreground = Brushes.White;
-        IdCategortySearch.Foreground = Brushes.White;
-        
         var app = (App) Application.Current;
-        if (string.IsNullOrWhiteSpace(IdSearch.Text + NameSearch.Text + PassportSearch.Text + DataSearch.Text + IdCategortySearch.Text))
-        {
-            WorkersGrid.ItemsSource = app.ArrCategories;
-            return;
-        }
-        WorkersGrid.ItemsSource = _arr;
-        
-        var id = -1;
-        if (!string.IsNullOrWhiteSpace(IdSearch.Text) && !int.TryParse(IdSearch.Text, out id))
-        {
-            IdSearch.Foreground = Brushes.Red;
-            return;
-        }
-        var sId = id.ToString();
-        
-        var idCat = -1;
-        if (!string.IsNullOrWhiteSpace(IdCategortySearch.Text) && !int.TryParse(IdCategortySearch.Text, out idCat))
-        {
-            IdCategortySearch.Foreground = Brushes.Red;
-            return;
-        }
-        var sIdCat = idCat.ToString();
-        
-        var regex = new Regex(@"[^0-9\.]+");
-        var matches = regex.Matches(DataSearch.Text);
-        if (matches.Count > 0)
-        {
-            DataSearch.Foreground = Brushes.Red;
-            return;
-        }
-        var sDt = DataSearch.Text.Trim();
-        
-        regex = new Regex(@"[^0-9 ]+");
-        matches = regex.Matches(PassportSearch.Text);
-        if (matches.Count > 0)
-        {
-            PassportSearch.Foreground = Brushes.Red;
-            return;
-        }
-        var sPass = PassportSearch.Text;
-        
-        var name = NameSearch.Text;
-        
-        foreach (var c in app.ArrWorkers)
-        {
-            if (idCat != -1 && !c.CategoryId.ToString().Contains(sIdCat))
-                continue;
-            
-            if (id != -1 && !c.Id.ToString().Contains(sId))
-                continue;
-
-            if (!string.IsNullOrWhiteSpace(name) && !c.Name.Contains(name))
-                continue;
-            
-            if (!string.IsNullOrWhiteSpace(sPass) && !c.Passport.Contains(sPass))
-                continue;
-            
-            if (!string.IsNullOrWhiteSpace(sDt) && !c.Birthday.Contains(sDt))
-                continue;
-
-            _arr.Add(c);
-        }
+        var view = CollectionViewSource.GetDefaultView(app.ArrWorkers);
+        view.Filter = o => {
+            var worker = ((o as Worker)!);
+            return (string.IsNullOrWhiteSpace(NameSearch.Text) || worker.Name.Contains(NameSearch.Text))
+                   && (string.IsNullOrWhiteSpace(IdSearch.Text) || worker.Id.ToString().Contains(IdSearch.Text))
+                   && (string.IsNullOrWhiteSpace(PassportSearch.Text) || worker.Passport.Contains(PassportSearch.Text))
+                   && (string.IsNullOrWhiteSpace(DataSearch.Text) || worker.Birthday.Contains(DataSearch.Text))
+                   && (string.IsNullOrWhiteSpace(IdCategortySearch.Text) || worker.CategoryId.ToString().Contains(IdCategortySearch.Text));
+        };
     }
 
     private bool _isFull;

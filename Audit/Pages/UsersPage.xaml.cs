@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using Audit.Objects;
@@ -19,72 +20,18 @@ public partial class UsersPage : Page
         app.LastDataGrid = UsersGrid;
     }
     
-
-    private readonly ObservableCollection<User> _arr = new ();
     private void Search_OnTextChanged(object sender, TextChangedEventArgs e)
     {
-        _arr.Clear();
-        IdSearch.Foreground = Brushes.White;
-        IdWorkerSearch.Foreground = Brushes.White;
-        TypeSearch.Foreground = Brushes.White;
-        
         var app = (App) Application.Current;
-        if (string.IsNullOrWhiteSpace(IdSearch.Text + LoginSearch.Text + PasswordSearch.Text + IdWorkerSearch.Text + TypeSearch.Text))
-        {
-            UsersGrid.ItemsSource = app.ArrUsers;
-            return;
-        }
-        
-        UsersGrid.ItemsSource = _arr;
-        
-        var id = -1;
-        if (!string.IsNullOrWhiteSpace(IdSearch.Text) && !int.TryParse(IdSearch.Text, out id))
-        {
-            IdSearch.Foreground = Brushes.Red;
-            return;
-        }
-        var sId = id.ToString();
-        
-        var idWorker = -1;
-        if (!string.IsNullOrWhiteSpace(IdWorkerSearch.Text) && !int.TryParse(IdWorkerSearch.Text, out idWorker))
-        {
-            IdWorkerSearch.Foreground = Brushes.Red;
-            return;
-        }
-        var sIdWorker = idWorker.ToString();
-        
-        var type = TypeUser.hr;
-        var hasType = !string.IsNullOrWhiteSpace(TypeSearch.Text);
-        if (hasType && !Enum.TryParse(TypeSearch.Text, out type))
-        {
-            TypeSearch.Foreground = Brushes.Red;
-            return;
-        }
-        
-        var login = LoginSearch.Text;
-        var pass = PasswordSearch.Text;
-
-        foreach (var c in app.ArrUsers)
-        {
-            if (id != -1 && !c.Id.ToString().Contains(sId))
-                continue;
-            
-            if (idWorker != -1 && !c.WorkerId.ToString().Contains(sIdWorker))
-                continue;
-
-            if (!string.IsNullOrWhiteSpace(login) && !c.Login.Contains(login))
-                continue;
-            
-            if (!string.IsNullOrWhiteSpace(pass) && !c.Password.Contains(pass))
-                continue;
-            
-            if (hasType && c.Type != type)
-                continue;
-            
-            _arr.Add(c);
-        }
-
-        UsersGrid.ItemsSource = _arr;
+        var view = CollectionViewSource.GetDefaultView(app.ArrUsers);
+        view.Filter = o => {
+            var user = ((o as User)!);
+            return (string.IsNullOrWhiteSpace(LoginSearch.Text) || user.Login.Contains(LoginSearch.Text))
+                   && (string.IsNullOrWhiteSpace(IdSearch.Text) || user.Id.ToString().Contains(IdSearch.Text))
+                   && (string.IsNullOrWhiteSpace(IdWorkerSearch.Text) || user.WorkerId.ToString().Contains(IdWorkerSearch.Text))
+                   && (string.IsNullOrWhiteSpace(PasswordSearch.Text) || user.Password.Contains(PasswordSearch.Text))
+                   && (string.IsNullOrWhiteSpace(TypeSearch.Text) || user.Type.ToString().Contains(TypeSearch.Text));
+        };
     }
 
     private bool _isFull;
