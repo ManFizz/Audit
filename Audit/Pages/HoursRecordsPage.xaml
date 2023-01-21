@@ -141,6 +141,7 @@
                                         Value="Transparent" />
                                 <Setter Property="BorderThickness"
                                         Value="1" />
+                                <!--<Setter Property="FontSize" Value="20"></Setter>-->
                             </Trigger>
                             <Trigger Property="IsEditing" Value="True">
                                 <Setter Property="Background" Value="#3A3A3A" />
@@ -148,6 +149,7 @@
                                         Value="White" />
                                 <Setter Property="BorderThickness"
                                         Value="1" />
+                                <!--<Setter Property="FontSize" Value="20"></Setter>-->
                             </Trigger>
                         </Style.Triggers>
                     </Style>
@@ -157,6 +159,7 @@
                         <Setter Property="AlternationCount" Value="2" />
                         <Setter Property="BorderBrush" Value="Black"/>
                         <Setter Property="BorderThickness" Value="1" />
+                        <!--<Setter Property="FontSize" Value="20"></Setter>-->
                     </Style>
                     
                     <Style BasedOn="{StaticResource {x:Type DataGridColumnHeader}}" TargetType="{x:Type DataGridColumnHeader}">
@@ -165,10 +168,12 @@
                         <Setter Property="Padding" Value="7 3"/>
                         <Setter Property="BorderBrush" Value="Black"/>
                         <Setter Property="BorderThickness" Value="0 0 1 1" />
+                        <!--<Setter Property="FontSize" Value="20"></Setter>-->
                     </Style>
 
                     <Style TargetType="{x:Type DataGridRow}">
                         <Setter Property="Background" Value="#2A2A2A"/>
+                        <!--<Setter Property="FontSize" Value="20"></Setter>-->
                     </Style>
                 </DataGrid.Resources>
                 

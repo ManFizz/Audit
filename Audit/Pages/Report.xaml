@@ -8,11 +8,10 @@
       Title="Report" MinHeight="200" MinWidth="700">
     <FlowDocumentScrollViewer MinWidth="700" Width="950">
     <FlowDocument Background="#1C1C1C" MinPageWidth="900" ColumnWidth="1000">
-        <Table Background="#1C1C1C"  x:Name="Table" CellSpacing="0">
+        <BlockUIContainer><ComboBox x:Name="Selector" SelectionChanged="Selector_OnSelectionChanged" /></BlockUIContainer>
+        <Table Background="#1C1C1C"  x:Name="Table" CellSpacing="0" BorderThickness="2" BorderBrush="Black">
                 <Table.Resources>
                     <Style TargetType="Paragraph">
-                        <Setter Property="Background" Value="#292929"/>
-                        <Setter Property="Foreground" Value="White"/>
                         <Setter Property="FontSize" Value="16"/>
                     </Style>
                     <Style TargetType="TableCell">
@@ -26,12 +25,19 @@
                 </Table.Resources>
                 <TableRowGroup FontWeight="Bold" Background="#343434">
                     <TableRow>
-                        <TableCell TextAlignment="Center"><Paragraph>ФИО</Paragraph></TableCell>
-                        <TableCell TextAlignment="Center"><Paragraph>Категория</Paragraph></TableCell>
-                        <TableCell TextAlignment="Center"><Paragraph>Ставка за 1 ч, руб.</Paragraph></TableCell>
-                        <TableCell TextAlignment="Center"><Paragraph>Дата выполнения работы</Paragraph></TableCell>
-                        <TableCell TextAlignment="Center"><Paragraph>Количество отработанных часов</Paragraph></TableCell>
-                        <TableCell TextAlignment="Center"><Paragraph>Начислено за выполненную работу, руб.</Paragraph></TableCell>
+                        <TableRow.Resources>
+                            <Style TargetType="TableCell">
+                                <Setter Property="Background" Value="CornflowerBlue"></Setter>
+                                <Setter Property="TextAlignment" Value="Center"></Setter>
+                                <Setter Property="Foreground" Value="Black"/>
+                            </Style>
+                        </TableRow.Resources>
+                        <TableCell><Paragraph>ФИО</Paragraph></TableCell>
+                        <TableCell><Paragraph>Категория</Paragraph></TableCell>
+                        <TableCell><Paragraph>Ставка за 1 ч, руб.</Paragraph></TableCell>
+                        <TableCell><Paragraph>Дата выполнения работы</Paragraph></TableCell>
+                        <TableCell><Paragraph>Количество отработанных часов</Paragraph></TableCell>
+                        <TableCell><Paragraph>Начислено за выполненную работу, руб.</Paragraph></TableCell>
                     </TableRow>
                 </TableRowGroup>
         </Table>

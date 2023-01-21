@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Audit.Objects;
@@ -21,6 +23,8 @@ namespace Audit
         public readonly ObservableCollection<HoursRecord> ArrHoursRecords = new();
         public readonly ObservableCollection<User> ArrUsers = new();
         public readonly ObservableCollection<Worker> ArrWorkers = new();
+        public readonly List<string> QueryList = new();
+        public readonly List<int> AvailableYears = new();
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -29,7 +33,7 @@ namespace Audit
             base.OnStartup(e);
         }
 
-        private void UpdateAllTables()
+        public void UpdateAllTables()
         {
             UpdateCategoriesTable();
             UpdateWorkersTable();
@@ -38,7 +42,7 @@ namespace Audit
             UpdateHoursRecordsTable();
         }
 
-        private void UpdateCategoriesTable()
+        public void UpdateCategoriesTable()
         {
             ArrCategories.Clear();
             var mysqlCmd = new MySqlCommand("SELECT * FROM categories", DbCon);
@@ -49,7 +53,7 @@ namespace Audit
             DbCon.Close();
         }
     
-        private void UpdateWorkersTable()
+        public void UpdateWorkersTable()
         {
             ArrWorkers.Clear();
             var mysqlCmd = new MySqlCommand("SELECT * FROM workers", DbCon);
@@ -60,7 +64,7 @@ namespace Audit
             DbCon.Close();
         }
         
-        private void UpdateCompanyTable()
+        public void UpdateCompanyTable()
         {
             var mysqlCmd = new MySqlCommand("SELECT * FROM company", DbCon);
             DbCon.Open();
@@ -71,7 +75,7 @@ namespace Audit
             DbCon.Close();
         }
         
-        private void UpdateUsersTable()
+        public void UpdateUsersTable()
         {
             var mysqlCmd = new MySqlCommand("SELECT * FROM users", DbCon);
             DbCon.Open();
@@ -86,32 +90,46 @@ namespace Audit
             DbCon.Close();
         }
         
-        private void UpdateHoursRecordsTable()
+        public void UpdateHoursRecordsTable()
         {
             var mysqlCmd = new MySqlCommand("SELECT * FROM hours_records", DbCon);
             DbCon.Open();
             var r = mysqlCmd.ExecuteReader();
             ArrHoursRecords.Clear();
+            AvailableYears.Clear();
             while (r.Read())
-                ArrHoursRecords.Add(new HoursRecord(r.GetInt32(0),r.GetInt32(1),r.GetInt32(2), r.GetString(3),r.GetInt32(4)));
+            {
+                ArrHoursRecords.Add(new HoursRecord(r.GetInt32(0), r.GetInt32(1), r.GetInt32(2), r.GetString(3), r.GetInt32(4)));
+                var dt = DateTime.Parse(r.GetString(3));
+                if(!AvailableYears.Contains(dt.Year)) 
+                    AvailableYears.Add(dt.Year);
+            }
+
             DbCon.Close();
         }
         
-        public int FastQuery(string query)
+        public void FastQuery(string query)
         {
+            QueryList.Add(query);
+        }
+
+        public void SaveQuery()
+        {
+            var query = QueryList.Aggregate("START TRANSACTION;", (current, q) => current + q) + "COMMIT;";
             try
             {
                 var cmd = new MySqlCommand(query, DbCon);
                 DbCon.Open();
-                var r = cmd.ExecuteNonQuery();
+                cmd.ExecuteNonQuery();
                 DbCon.Close();
-                return r;
             }
             catch
             {
                 DbCon.Close();
                 throw;
             }
+            QueryList.Clear();
+            MessageBox.Show("Изменения успешно сохранены", "Уведомление", MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.None);
         }
 
         private void BuildConnection()

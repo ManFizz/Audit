@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -77,8 +78,8 @@ public partial class CompanyPage : Page
     }
     
     
-    private bool _isFieldNameOk;
-    private bool _isFieldAddressOk;
+    private static readonly bool[] FieldInit = {true, false, false};
+    private bool[] _isFieldOk = (FieldInit.Clone() as bool[])!;
     private bool _isInEditCell;
     private bool _termianteCellEdit;
     private void CompanyGrid_OnCellEditEnding(object? sender, DataGridCellEditEndingEventArgs e)
@@ -93,10 +94,14 @@ public partial class CompanyPage : Page
         {
             if (_inEditNewItemMode)
             {
-                if (e.Column == CompanyGrid.Columns[1])
-                    _isFieldNameOk = false;
-                else if (e.Column == CompanyGrid.Columns[2])
-                    _isFieldAddressOk = false;
+                for (var i = 0; i < CompanyGrid.Columns.Count; i++)
+                {
+                    if (e.Column != CompanyGrid.Columns[i])
+                        continue;
+                    
+                    _isFieldOk[i] = FieldInit[i];
+                    break;
+                }
             }
             _isInEditCell = false;
             return;
@@ -106,12 +111,12 @@ public partial class CompanyPage : Page
             if (e.Column == CompanyGrid.Columns[1])
             {
                 ((Company) CompanyGrid.SelectedItem).CheckName(((TextBox) e.EditingElement).Text);
-                _isFieldNameOk = true;
+                _isFieldOk[1] = true;
             }
             else if (e.Column == CompanyGrid.Columns[2])
             {
                 ((Company)CompanyGrid.SelectedItem).CheckAddress(((TextBox)e.EditingElement).Text);
-                _isFieldAddressOk = true;
+                _isFieldOk[2] = true;
             }
             
             _isInEditCell = false;
@@ -129,7 +134,7 @@ public partial class CompanyPage : Page
             return;
         
         _inEditNewItemMode = false;
-        if (!_isFieldNameOk || !_isFieldAddressOk)
+        if (_isFieldOk.Any(t => !t))
         {
             if (e.EditAction == DataGridEditAction.Commit && !_termianteCellEdit)
             {
@@ -142,7 +147,7 @@ public partial class CompanyPage : Page
         {
             _lastItem.Insert();
         }
-        _isFieldAddressOk = _isFieldNameOk = false;
+        _isFieldOk = (FieldInit.Clone() as bool[])!;
         _inEditNewItemMode = false;
         _termianteCellEdit = false;
         _isInEditCell = false;

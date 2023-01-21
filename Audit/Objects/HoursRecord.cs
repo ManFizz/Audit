@@ -197,12 +197,12 @@ public class HoursRecord : BaseObject
 
     public static bool Remove(HoursRecord hoursRecord)
     {
-        app.FastQuery($"DELETE FROM hours_records WHERE id = {hoursRecord.Id}");
+        app.FastQuery($"DELETE FROM hours_records WHERE id = {hoursRecord.Id};");
         app.ArrCategories.Remove(app.ArrCategories.First(c => c.Id == hoursRecord.Id));
         return true;
     }
     public void Insert()
     {
-        app.FastQuery($"INSERT INTO hours_records (id, company_id, worker_id, date, hours) VALUES ('{Id}','{CompanyId}','{WorkerId}', '{Date}','{Hours}')");
+        app.FastQuery($"INSERT INTO hours_records (id, company_id, worker_id, date, hours) VALUES ('{Id}','{CompanyId}','{WorkerId}', '{Date}','{Hours}');");
     }
 }

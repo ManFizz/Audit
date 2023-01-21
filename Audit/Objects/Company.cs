@@ -93,7 +93,7 @@ public class Company : BaseObject
             try {
                 CheckAddress(value);
             
-                ((App) Application.Current).FastQuery($"UPDATE company SET address = '{value}' WHERE id = {Id};");
+                app.FastQuery($"UPDATE company SET address = '{value}' WHERE id = {Id};");
                 _address = value;
                 NotifyPropertyChanged(nameof(Address));
             } catch (Exception e) {
@@ -105,16 +105,14 @@ public class Company : BaseObject
     public void CheckAddress(string value)
     {
         if (value.Length < MinLengthAddress)
-            throw new Exception($"Название должно содержать минимум {MinLengthAddress} символов");
+            throw new Exception($"Адрес должен содержать минимум {MinLengthAddress} символов");
         
         if (value.Length > MaxLengthAddress)
-            throw new Exception($"Название должно содержать максимум {MaxLengthAddress} символов");
+            throw new Exception($"Адрес должендолжен содержать максимум {MaxLengthAddress} символов");
             
         if (!value.All(t => AddressCharacters.Any(c => t == c)))
-            throw new Exception($"Название содержит недопустимые символы - '{value.First(t => AddressCharacters.All(c => t != c))}'");
+            throw new Exception($"Адрес содержит недопустимые символы - '{value.First(t => AddressCharacters.All(c => t != c))}'");
 
-        if (ArrCompany.Any(c => (string.Compare(c.Address, value, StringComparison.Ordinal) == 0 && this != c)))
-            throw new Exception("Введенный адресс уже существует");
     }
     #endregion
 
@@ -136,13 +134,13 @@ public class Company : BaseObject
         foreach(var hoursRecord in arr)
             hoursRecord.Remove();
         
-        app.FastQuery($"DELETE FROM company WHERE id = {comp.Id}");
+        app.FastQuery($"DELETE FROM company WHERE id = {comp.Id};");
         app.ArrCompany.Remove(app.ArrCompany.First(c => c.Id == comp.Id));
         return true;
     }
 
     public void Insert()
     {
-        app.FastQuery($"INSERT INTO company (id, name, address) VALUES ('{Id}','{Name}','{Address}')");
+        app.FastQuery($"INSERT INTO company (id, name, address) VALUES ('{Id}','{Name}','{Address}');");
     }
 }

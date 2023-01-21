@@ -47,6 +47,7 @@ public partial class UsersPage : Page
 
     private bool _inEditNewItemMode;
     private User _lastItem;
+    private bool _skipNextSelect;
     private void UsersGrid_OnAddingNewItem(object? sender, AddingNewItemEventArgs e)
     {
         if (e.NewItem != null)
@@ -67,7 +68,8 @@ public partial class UsersPage : Page
         _skipNextSelect = true;
     }
     
-    private bool[] _isFieldOk = {true, false, false, false, true, false};
+    private static readonly bool[] FieldInit = {true, false, false, true, true, true};
+    private bool[] _isFieldOk = (FieldInit.Clone() as bool[])!;
     private bool _isInEditCell;
     
     
@@ -87,7 +89,7 @@ public partial class UsersPage : Page
                 {
                     if (e.Column == UsersGrid.Columns[i])
                     {
-                        _isFieldOk[i] = false;
+                        _isFieldOk[i] = FieldInit[i];
                         break;
                     }
                 }
@@ -160,7 +162,7 @@ public partial class UsersPage : Page
             _lastItem.Insert();
         }
 
-        _isFieldOk = new [] {true, false, false, false, true, false};
+        _isFieldOk = (FieldInit.Clone() as bool[])!;
         
         _inEditNewItemMode = false;
         _termianteCellEdit = false;
@@ -168,7 +170,6 @@ public partial class UsersPage : Page
     }
 
     private bool _termianteCellEdit;
-    private bool _skipNextSelect;
     private void UsersGrid_OnSelectedCellsChanged(object sender, SelectedCellsChangedEventArgs e)
     {
         if (!_inEditNewItemMode || _skipNextSelect)

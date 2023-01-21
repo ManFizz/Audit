@@ -110,7 +110,7 @@ public class Worker : BaseObject
     public static void CheckPassport(string value)
     {
         if(!RegexPassport.Match(value).Success)
-            throw new Exception("Пасспорт не соответствует формату");
+            throw new Exception("Паспорт не соответствует формату");
     }
     #endregion
     
@@ -245,14 +245,14 @@ public class Worker : BaseObject
         foreach(var hoursRecord in arr2)
             hoursRecord.Remove();
         
-        app.FastQuery($"DELETE FROM workers WHERE id = {worker.Id}");
+        app.FastQuery($"DELETE FROM workers WHERE id = {worker.Id};");
         app.ArrWorkers.Remove(app.ArrWorkers.First(c => c.Id == worker.Id));
         return true;
     }
 
     public void Insert()
     {
-        app.FastQuery($"INSERT INTO workers (id, name, passport, birthday, phone_number, category_id) VALUES ('{Id}','{Name}','{Passport}','{Birthday}','{PhoneNumber}','{CategoryId}')");
+        app.FastQuery($"INSERT INTO workers (id, name, passport, birthday, phone_number, category_id) VALUES ('{Id}','{Name}','{Passport}','{Birthday}','{PhoneNumber}','{CategoryId}');");
     }
 
 }

@@ -14,36 +14,18 @@ namespace Audit
         
         public LogInWindow()
         {
-            InitializeComponent();
-            this.WindowStyle+=2;
-        }
-
-        private readonly MainWindow? _mainWindow;
-        public LogInWindow(MainWindow? mainWindow)
-        {
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
             InitializeComponent();
-            _mainWindow = mainWindow;
+            WindowStyle+=2;
         }
-        
-        private bool _shown;
-        protected override void OnContentRendered(EventArgs e)
-        {
-            base.OnContentRendered(e);
 
-            if (_shown)
-                return;
-            
-            _shown = true;
-            _mainWindow?.Close();
-        }
 
         private void LogInButton_Click(object sender, RoutedEventArgs e)
         {
-            var app = ((App) Application.Current);
+            var app = (App) Application.Current;
             var login = MySqlHelper.EscapeString(Login.Text);
             var password = MySqlHelper.EscapeString(Password.Password);
-            if (!IsValidPassword(login) || !IsValidLogin(password))
+            if (!IsValidLogin(login) || !IsValidPassword(password))
                 return;
             
             var mysqlCmd = new MySqlCommand($"SELECT id, worker_id, type FROM users WHERE login='{login}' AND password='{password}'", app.DbCon);
@@ -51,7 +33,7 @@ namespace Audit
             var reader = mysqlCmd.ExecuteReader();
             if (!reader.Read())
             {
-                MessageBox.Show("Invalid login or password", "Error", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
+                MessageBox.Show("Неправильный логин или пароль", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.None);
                 reader.Close();
                 app.DbCon.Close();
                 return;

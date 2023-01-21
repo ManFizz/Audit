@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -78,8 +79,8 @@ public partial class CategoriesPage : Page
         SkipNextSelect = true;
     }
 
-    private bool _isFieldNameOk;
-    private bool _isFieldPaymentOk;
+    private static readonly bool[] FieldInit = {true, false, false};
+    private bool[] _isFieldOk = (FieldInit.Clone() as bool[])!;
     private bool _isInEditCell;
     private bool _termianteCellEdit;
     private void CategoriesGrid_OnCellEditEnding(object? sender, DataGridCellEditEndingEventArgs e)
@@ -94,10 +95,14 @@ public partial class CategoriesPage : Page
         {
             if (_inEditNewItemMode)
             {
-                if (e.Column == CategoriesGrid.Columns[1])
-                    _isFieldNameOk = false;
-                else if (e.Column == CategoriesGrid.Columns[2])
-                    _isFieldPaymentOk = false;
+                for (var i = 0; i < CategoriesGrid.Columns.Count; i++)
+                {
+                    if (e.Column != CategoriesGrid.Columns[i])
+                        continue;
+                    
+                    _isFieldOk[i] = FieldInit[i];
+                    break;
+                }
             }
             _isInEditCell = false;
             return;
@@ -107,7 +112,7 @@ public partial class CategoriesPage : Page
             if (e.Column == CategoriesGrid.Columns[1])
             {
                 ((Category) CategoriesGrid.SelectedItem).CheckName(((TextBox) e.EditingElement).Text);
-                _isFieldNameOk = true;
+                _isFieldOk[1] = true;
             }
             else if (e.Column == CategoriesGrid.Columns[2])
             {
@@ -116,7 +121,7 @@ public partial class CategoriesPage : Page
                     throw new Exception("Ожидалось целое число");
                 
                 ((Category) CategoriesGrid.SelectedItem).CheckPayment(payment);
-                _isFieldPaymentOk = true;
+                _isFieldOk[2] = true;
             }
 
             _isInEditCell = false;
@@ -133,7 +138,7 @@ public partial class CategoriesPage : Page
         if (!_inEditNewItemMode) 
             return;
         
-        if (!_isFieldPaymentOk || !_isFieldNameOk)
+        if (_isFieldOk.Any(t => !t))
         {
             if (e.EditAction == DataGridEditAction.Commit && !_termianteCellEdit)
             {
@@ -147,7 +152,7 @@ public partial class CategoriesPage : Page
         {
             _lastItem.Insert();
         }
-        _isFieldPaymentOk = _isFieldNameOk = false;
+        _isFieldOk = (FieldInit.Clone() as bool[])!;
         _inEditNewItemMode = false;
         _termianteCellEdit = false;
         _isInEditCell = false;

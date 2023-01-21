@@ -41,7 +41,7 @@ public class Category : BaseObject
     #endregion
     
     #region Name
-    private const int MinLengthName = 6;
+    private const int MinLengthName = 1;
     private const int MaxLengthName = 64;
     private const string NameCharacters = " qwertyuiopasdfghjklzxcvvbnmйцукенгшщзххъфывапрролджэячсмитььбюёQWERTYUIOPASDFGHJKLZXCCVBNMЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬЁ";
     private string _name;
@@ -132,14 +132,14 @@ public class Category : BaseObject
             worker.Remove();
         
         app.ArrCategories.Remove(app.ArrCategories.First(c => c.Id == cat.Id));
-        app.FastQuery($"DELETE FROM categories WHERE id = {cat.Id}");
+        app.FastQuery($"DELETE FROM categories WHERE id = {cat.Id};");
         
         return true;
     }
 
     public void Insert()
     {
-        app.FastQuery($"INSERT INTO categories (id, name, payment) VALUES ('{Id}','{Name}',{Payment})");
+        app.FastQuery($"INSERT INTO categories (id, name, payment) VALUES ('{Id}','{Name}',{Payment});");
     }
     
 }

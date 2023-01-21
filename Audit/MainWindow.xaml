@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         mc:Ignorable="d"
-        Title="MainWindow" Height="700" Width="1500" MinWidth="800" MinHeight="600" Background="#222222">
+        Title="Audit" Height="700" Width="1500" MinWidth="800" MinHeight="600" Background="#222222">
     
     <Grid>
         <Grid.ColumnDefinitions>
@@ -63,6 +63,10 @@
                     <RowDefinition />
                     <RowDefinition />
                     <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
                 </Grid.RowDefinitions>
                 
                 <Grid.Resources>
@@ -94,6 +98,12 @@
                 <Button Grid.Row="5" x:Name="BtnUsers" Click="OnClick_BtnNavUsers">Пользователи</Button>
                 <Button Grid.Row="6" x:Name="BtnReport" Click="OnClick_BtnNavReport">Отчёт</Button>
                 
+                <Canvas Grid.Row="7" Height="10" Width="Auto">
+                    <Line X1="0" Y1="0" X2="180" Y2="0" Stroke="DimGray" StrokeThickness="3" />
+                </Canvas>
+                <TextBlock Grid.Row="8" Foreground="DarkGray" FontSize="12" Padding="20 8 0 0" Text="Изменения" x:Name="TextBlock_Change" />
+                <Button Grid.Row="9" x:Name="Button_Save" Click="OnClick_BtnSave">Сохранить</Button>
+                <Button Grid.Row="10" x:Name="Button_Cancel" Click="OnClick_BtnCancel">Отменить</Button>
             </Grid>
         </Grid>
         <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">

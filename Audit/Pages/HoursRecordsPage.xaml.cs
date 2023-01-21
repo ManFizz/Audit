@@ -102,7 +102,8 @@ public partial class HoursRecordsPage : Page
         _skipNextSelect = true;
     }
 
-    private bool[] _isFieldOk = {true, false, true, false, true, true, true};
+    private static readonly bool[] FieldInit = {true, false, true, false, true, true, true};
+    private bool[] _isFieldOk = (FieldInit.Clone() as bool[])!;
     private bool _isInEditCell;
     private void HoursRecordsGrid_OnCellEditEnding(object? sender, DataGridCellEditEndingEventArgs e)
     {
@@ -118,11 +119,11 @@ public partial class HoursRecordsPage : Page
             {
                 for (var i = 0; i < HoursRecordsGrid.Columns.Count; i++)
                 {
-                    if (e.Column == HoursRecordsGrid.Columns[i])
-                    {
-                        _isFieldOk[i] = false;
-                        break;
-                    }
+                    if (e.Column != HoursRecordsGrid.Columns[i])
+                        continue;
+                    
+                    _isFieldOk[i] = FieldInit[i];
+                    break;
                 }
             }
             _isInEditCell = false;
@@ -145,6 +146,7 @@ public partial class HoursRecordsPage : Page
                     return;
                 }
 
+                (HoursRecordsGrid.SelectedItem as HoursRecord)!.CompanyId = item;
                 _isFieldOk[1] = true;
             }
             else if (e.Column == HoursRecordsGrid.Columns[3])
@@ -162,6 +164,7 @@ public partial class HoursRecordsPage : Page
                     return;
                 }
 
+                (HoursRecordsGrid.SelectedItem as HoursRecord)!.WorkerId = item;
                 _isFieldOk[3] = true;
             }
             else if (e.Column == HoursRecordsGrid.Columns[5])
@@ -174,15 +177,8 @@ public partial class HoursRecordsPage : Page
                 var sItem = ((TextBox) e.EditingElement).Text;
                 if (!int.TryParse(sItem, out var item))
                     throw new Exception("Ожидалось целое число");
-                try
-                {
-                    HoursRecord.CheckHours(item);
-                }
-                catch (Exception)
-                {
-                    e.Cancel = true;
-                    return;
-                }
+                
+                HoursRecord.CheckHours(item);
 
                 _isFieldOk[6] = true;
             }
@@ -217,7 +213,7 @@ public partial class HoursRecordsPage : Page
             _lastItem.Insert();
         }
 
-        _isFieldOk = new [] {true, false, true, false, true, true, true};
+        _isFieldOk = (FieldInit.Clone() as bool[])!;
         
         _inEditNewItemMode = false;
         _termianteCellEdit = false;

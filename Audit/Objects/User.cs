@@ -79,11 +79,13 @@ public class User : BaseObject
             
         if (value.Any(t => LoginCharacters.All(c => t != c)))
             throw new Exception($"Логин содержит недопустимые символы - '{value.First(t => LoginCharacters.All(c => t != c))}'");
+        
+        //TODO add check unique
     }
     #endregion
     
     #region Password
-    private const int MinLengthPassword = 3;
+    private const int MinLengthPassword = 6;
     private const int MaxLengthPassword = 32;
     private const string PasswordCharacters = "qwertyuiopasdfghjklzxcvvbnmйцукенгшщзххъфывапрролджэячсмитььбюёQWERTYUIOPASDFGHJKLZXCCVBNMЙЦУКЕНГШЩЗФЫВАПРОЛДЯЧСМИТЬЁ01234567890_";
     private string _password;
@@ -108,13 +110,13 @@ public class User : BaseObject
     public static void CheckPassword(string value)
     {
         if (value.Length < MinLengthPassword)
-            throw new Exception($"Пароль должен содержать минимум {MinLengthLogin} символов");
+            throw new Exception($"Пароль должен содержать минимум {MinLengthPassword} символов");
         
         if (value.Length > MaxLengthPassword)
-            throw new Exception($"Пароль должен содержать максимум {MaxLengthLogin} символов");
+            throw new Exception($"Пароль должен содержать максимум {MaxLengthPassword} символов");
             
         if (value.Any(t => PasswordCharacters.All(c => t != c)))
-            throw new Exception($"Пароль содержит недопустимые символы - '{value.First(t => LoginCharacters.All(c => t != c))}'");
+            throw new Exception($"Пароль содержит недопустимые символы - '{value.First(t => PasswordCharacters.All(c => t != c))}'");
     }
     #endregion
     
@@ -199,7 +201,7 @@ public class User : BaseObject
             return false;
         }
         
-        app.FastQuery($"DELETE FROM users WHERE id = {user.Id}");
+        app.FastQuery($"DELETE FROM users WHERE id = {user.Id};");
         app.ArrCategories.Remove(app.ArrCategories.First(c => c.Id == user.Id));
         return true;
     }
@@ -207,6 +209,6 @@ public class User : BaseObject
     public void Insert()
     {
         var sIdW = WorkerId == -1 ? "null" : WorkerId.ToString();
-        app.FastQuery($"INSERT INTO users (id, login, password, worker_id, type) VALUES ({Id},'{Login}','{Password}', {sIdW},'{Type}')");
+        app.FastQuery($"INSERT INTO users (id, login, password, worker_id, type) VALUES ({Id},'{Login}','{Password}', {sIdW},'{Type}');");
     }
 }

@@ -85,7 +85,8 @@ public partial class WorkersPage : Page
         _skipNextSelect = true;
     }
     
-    private bool[] _isFieldOk = {true, false, false, false, false, false};
+    private static readonly bool[] FieldInit = {true, false, false, false, false, false};
+    private bool[] _isFieldOk = (FieldInit.Clone() as bool[])!;
     private bool _isInEditCell;
     private void WorkersGrid_OnCellEditEnding(object? sender, DataGridCellEditEndingEventArgs e)
     {
@@ -103,7 +104,7 @@ public partial class WorkersPage : Page
                 {
                     if (e.Column == WorkersGrid.Columns[i])
                     {
-                        _isFieldOk[i] = false;
+                        _isFieldOk[i] = FieldInit[i];
                         break;
                     }
                 }
@@ -168,15 +169,13 @@ public partial class WorkersPage : Page
                 e.Cancel = true;
                 return;
             }
-            
-            //_lastItem.Remove(); //never return false
         }
         else
         {
             _lastItem.Insert();
         }
 
-        _isFieldOk = new [] {true, false, false, false, false, false};
+        _isFieldOk = (FieldInit.Clone() as bool[])!;
         
         _inEditNewItemMode = false;
         _termianteCellEdit = false;

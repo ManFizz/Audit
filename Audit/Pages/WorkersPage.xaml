@@ -66,7 +66,7 @@
             </TextBlock>
             
             <TextBox Grid.Column="2" Grid.Row="1" x:Name="PassportSearch" TextChanged="Search_OnTextChanged"/>
-            <TextBlock Grid.Column="2" Grid.Row="1" IsHitTestVisible="False" Text="Введите пасспорт" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="LightGray">
+            <TextBlock Grid.Column="2" Grid.Row="1" IsHitTestVisible="False" Text="Введите паспорт" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,0,0,0" Foreground="LightGray">
                 <TextBlock.Style>
                     <Style TargetType="{x:Type TextBlock}">
                         <Setter Property="Visibility" Value="Collapsed"/>
@@ -162,7 +162,7 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="№"  Binding="{Binding Path=Id}" Width="Auto" IsReadOnly="True" />
                 <DataGridTextColumn Header="ФИО" Binding="{Binding Path=Name}" Width="Auto" />
-                <DataGridTextColumn Header="Пасспорт" Binding="{Binding Path=Passport}" Width="Auto" />
+                <DataGridTextColumn Header="Паспорт" Binding="{Binding Path=Passport}" Width="Auto" />
                 <DataGridTextColumn Header="Дата рождения" Binding="{Binding Path=Birthday}" Width="Auto" />
                 <DataGridTextColumn Header="Номер телефона" Binding="{Binding Path=PhoneNumber}" Width="Auto" />
                 <DataGridTextColumn Header="№ категории" Binding="{Binding Path=CategoryId}" Width="Auto" />
