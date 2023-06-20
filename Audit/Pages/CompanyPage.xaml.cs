@@ -161,6 +161,11 @@ public partial class CompanyPage : Page
             return;
         }
 
+        TerminateEdit();
+    }
+    
+    private void TerminateEdit()
+    {
         _termianteCellEdit = true;
         var cc = CompanyGrid.CurrentCell;
         foreach (var col in CompanyGrid.Columns)
@@ -186,5 +191,10 @@ public partial class CompanyPage : Page
         
         var app = (App) Application.Current;
         app.ArrCompany.Remove((Company)e.NewItem);
+    }
+
+    private void CompanyGrid_OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        TerminateEdit();
     }
 }

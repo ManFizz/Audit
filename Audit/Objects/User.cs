@@ -202,7 +202,7 @@ public class User : BaseObject
         }
         
         app.FastQuery($"DELETE FROM users WHERE id = {user.Id};");
-        app.ArrCategories.Remove(app.ArrCategories.First(c => c.Id == user.Id));
+        app.ArrUsers.Remove(app.ArrUsers.First(c => c.Id == user.Id));
         return true;
     }
 

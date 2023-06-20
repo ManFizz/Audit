@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -6,6 +7,7 @@ namespace Audit;
 
 public partial class MainWindow : Window
 {
+    private readonly List<Uri> _listUri = new();
     public MainWindow()
     {
         InitializeComponent();
@@ -32,6 +34,18 @@ public partial class MainWindow : Window
         {
             BtnReport.Visibility = Visibility.Collapsed;
         }
+
+
+        if (app.ActiveUser.Type is TypeUser.hr)
+        {
+            BtnHoursRecords.Visibility = Visibility.Collapsed;
+        }
+        _listUri.Add(new Uri("Pages/CategoriesPage.xaml", UriKind.Relative));
+        _listUri.Add(new Uri("Pages/WorkersPage.xaml", UriKind.Relative));
+        _listUri.Add(new Uri("Pages/HoursRecordsPage.xaml", UriKind.Relative));
+        _listUri.Add(new Uri("Pages/CompanyPage.xaml", UriKind.Relative));
+        _listUri.Add(new Uri("Pages/UsersPage.xaml", UriKind.Relative));
+        _listUri.Add(new Uri("Pages/Report.xaml", UriKind.Relative));
     }
     
     private bool IsAllOk()
@@ -74,8 +88,8 @@ public partial class MainWindow : Window
     {
         if (!IsAllOk())
             return;
-        
-        CenterFrame.Source = new Uri("Pages/CategoriesPage.xaml", UriKind.Relative);
+
+        CenterFrame.Source = _listUri[0];
         ClearStyleBtns(BtnCategories);
     }
 
@@ -84,7 +98,7 @@ public partial class MainWindow : Window
         if (!IsAllOk())
             return;
         
-        CenterFrame.Source = new Uri("Pages/WorkersPage.xaml", UriKind.Relative);
+        CenterFrame.Source = _listUri[1];
         ClearStyleBtns(BtnWorkers);
     }
 
@@ -93,7 +107,7 @@ public partial class MainWindow : Window
         if (!IsAllOk())
             return;
         
-        CenterFrame.Source = new Uri("Pages/HoursRecordsPage.xaml", UriKind.Relative);
+        CenterFrame.Source = _listUri[2];
         ClearStyleBtns(BtnHoursRecords);
     }
 
@@ -102,7 +116,7 @@ public partial class MainWindow : Window
         if (!IsAllOk())
             return;
         
-        CenterFrame.Source = new Uri("Pages/CompanyPage.xaml", UriKind.Relative);
+        CenterFrame.Source =_listUri[3];
         ClearStyleBtns(BtnCompany);
     }
 
@@ -111,7 +125,7 @@ public partial class MainWindow : Window
         if (!IsAllOk())
             return;
         
-        CenterFrame.Source = new Uri("Pages/UsersPage.xaml", UriKind.Relative);
+        CenterFrame.Source = _listUri[4];
         ClearStyleBtns(BtnUsers);
     }
     private void OnClick_BtnNavReport(object sender, RoutedEventArgs e)
@@ -119,7 +133,7 @@ public partial class MainWindow : Window
         if (!IsAllOk())
             return;
         
-        CenterFrame.Source = new Uri("Pages/Report.xaml", UriKind.Relative);
+        CenterFrame.Source = _listUri[5];
         ClearStyleBtns(BtnReport);
     }
 

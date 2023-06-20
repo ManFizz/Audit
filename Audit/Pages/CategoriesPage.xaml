@@ -77,7 +77,8 @@
                   CommandManager.PreviewCanExecute="Grid_PreviewCanExecute" HeadersVisibility="Column" Margin="5" AlternatingRowBackground="#333333" 
                   CanUserDeleteRows="True" AddingNewItem="CategoriesGrid_OnAddingNewItem" CellEditEnding="CategoriesGrid_OnCellEditEnding"
                   RowEditEnding="CategoriesGrid_OnRowEditEnding" SelectedCellsChanged="CategoriesGrid_OnSelectedCellsChanged"
-                  PreparingCellForEdit="CategoriesGrid_OnPreparingCellForEdit" InitializingNewItem="CategoriesGrid_OnInitializingNewItem"> 
+                  PreparingCellForEdit="CategoriesGrid_OnPreparingCellForEdit" InitializingNewItem="CategoriesGrid_OnInitializingNewItem"
+                  Unloaded="CategoriesGrid_OnUnloaded"> 
             <DataGrid.Resources>
                 <Style TargetType="DataGridCell">
                     <Setter Property="Foreground" Value="White"/>

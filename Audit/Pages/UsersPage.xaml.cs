@@ -154,8 +154,6 @@ public partial class UsersPage : Page
                 e.Cancel = true;
                 return;
             }
-            
-            //_lastItem.Remove(); //never return false
         }
         else
         {
@@ -178,10 +176,10 @@ public partial class UsersPage : Page
             return;
         }
 
-        TerminateRowEdit();
+        TerminateEdit();
     }
 
-    public void TerminateRowEdit()
+    public void TerminateEdit()
     {
         _termianteCellEdit = true;
         var cc = UsersGrid.CurrentCell;
@@ -247,5 +245,10 @@ public partial class UsersPage : Page
             return;
         }
         ((User) UsersGrid.SelectedItem).WorkerId = ((Worker) selectedItem).Id;
+    }
+
+    private void UsersGrid_OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        TerminateEdit();
     }
 }

@@ -228,7 +228,12 @@ public partial class HoursRecordsPage : Page
             _skipNextSelect = false;
             return;
         }
+
+        TerminateEdit();
+    }
     
+    private void TerminateEdit()
+    {
         _termianteCellEdit = true;
         var cc = HoursRecordsGrid.CurrentCell;
         foreach (var col in HoursRecordsGrid.Columns)
@@ -239,7 +244,6 @@ public partial class HoursRecordsPage : Page
         HoursRecordsGrid.CurrentCell = cc;
         _isInEditCell = false;
     }
-    
     private void HoursRecordsGrid_OnPreparingCellForEdit(object? sender, DataGridPreparingCellForEditEventArgs e)
     {
         if (_isInEditCell)
@@ -316,5 +320,10 @@ public partial class HoursRecordsPage : Page
         }
         
         ((HoursRecord) HoursRecordsGrid.SelectedItem).WorkerId = ((Worker) selectedItem).Id;
+    }
+
+    private void HoursRecordsGrid_OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        TerminateEdit();
     }
 }

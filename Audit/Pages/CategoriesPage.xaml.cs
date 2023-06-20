@@ -166,6 +166,11 @@ public partial class CategoriesPage : Page
             return;
         }
 
+        TerminateEdit();
+    }
+
+    private void TerminateEdit()
+    {
         _termianteCellEdit = true;
         var cc = CategoriesGrid.CurrentCell;
         foreach (var col in CategoriesGrid.Columns)
@@ -191,5 +196,10 @@ public partial class CategoriesPage : Page
         
         var app = (App) Application.Current;
         app.ArrCategories.Remove((Category)e.NewItem);
+    }
+
+    private void CategoriesGrid_OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        TerminateEdit();
     }
 }

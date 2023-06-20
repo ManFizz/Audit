@@ -78,7 +78,7 @@
                   CommandManager.PreviewCanExecute="CompanyGrid_OnPreviewCanExecute" HeadersVisibility="Column" Margin="5" AlternatingRowBackground="#333333" 
                   AddingNewItem="CompanyGrid_OnAddingNewItem" CellEditEnding="CompanyGrid_OnCellEditEnding" RowEditEnding="CompanyGrid_OnRowEditEnding"
                   PreparingCellForEdit="CompanyGrid_OnPreparingCellForEdit" SelectedCellsChanged="CompanyGrid_OnSelectedCellsChanged"
-                  InitializingNewItem="CompanyGrid_OnInitializingNewItem">
+                  InitializingNewItem="CompanyGrid_OnInitializingNewItem" Unloaded="CompanyGrid_OnUnloaded">
             <DataGrid.Resources>
                 <Style TargetType="DataGridCell">
                     <Setter Property="Foreground" Value="White"/>

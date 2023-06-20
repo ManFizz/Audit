@@ -198,7 +198,7 @@ public class HoursRecord : BaseObject
     public static bool Remove(HoursRecord hoursRecord)
     {
         app.FastQuery($"DELETE FROM hours_records WHERE id = {hoursRecord.Id};");
-        app.ArrCategories.Remove(app.ArrCategories.First(c => c.Id == hoursRecord.Id));
+        app.ArrHoursRecords.Remove(app.ArrHoursRecords.First(c => c.Id == hoursRecord.Id));
         return true;
     }
     public void Insert()

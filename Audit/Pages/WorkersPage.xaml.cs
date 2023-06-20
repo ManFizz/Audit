@@ -190,7 +190,12 @@ public partial class WorkersPage : Page
             _skipNextSelect = false;
             return;
         }
-    
+
+        TerminateEdit();
+    }
+
+    private void TerminateEdit()
+    {
         _termianteCellEdit = true;
         var cc = WorkersGrid.CurrentCell;
         foreach (var col in WorkersGrid.Columns)
@@ -201,7 +206,7 @@ public partial class WorkersPage : Page
         WorkersGrid.CurrentCell = cc;
         _isInEditCell = false;
     }
-    
+
     private void WorkersGrid_OnPreparingCellForEdit(object? sender, DataGridPreparingCellForEditEventArgs e)
     {
         if (_isInEditCell)
@@ -258,4 +263,8 @@ public partial class WorkersPage : Page
         _isFieldOk[5] = true;
     }
 
+    private void WorkersGrid_OnUnloaded(object sender, RoutedEventArgs e)
+    {
+        TerminateEdit();
+    }
 }

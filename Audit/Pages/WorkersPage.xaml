@@ -117,7 +117,7 @@
                   CommandManager.PreviewCanExecute="WorkersGrid_OnPreviewCanExecute" HeadersVisibility="Column" Margin="5" AlternatingRowBackground="#333333" 
                   AddingNewItem="WorkersGrid_OnAddingNewItem" PreparingCellForEdit="WorkersGrid_OnPreparingCellForEdit" SelectionChanged="WorkersGrid_OnSelectionChanged"
                   CellEditEnding="WorkersGrid_OnCellEditEnding" RowEditEnding="WorkersGrid_OnRowEditEnding" SelectedCellsChanged="WorkersGrid_OnSelectedCellsChanged"
-                  InitializingNewItem="WorkersGrid_OnInitializingNewItem">
+                  InitializingNewItem="WorkersGrid_OnInitializingNewItem" Unloaded="WorkersGrid_OnUnloaded">
             <DataGrid.Resources>
                 <Style TargetType="DataGridCell">
                     <Setter Property="Foreground" Value="White"/>

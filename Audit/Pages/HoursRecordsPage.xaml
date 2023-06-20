@@ -130,7 +130,8 @@
                       CommandManager.PreviewCanExecute="HoursRecordsGrid_OnPreviewCanExecute" HeadersVisibility="Column" Margin="5" AlternatingRowBackground="#333333" 
                       AddingNewItem="HoursRecordsGrid_OnAddingNewItem" RowDetailsVisibilityMode="Collapsed" PreparingCellForEdit="HoursRecordsGrid_OnPreparingCellForEdit"
                       SelectionChanged="HoursRecordsGrid_OnSelectionChanged" CellEditEnding="HoursRecordsGrid_OnCellEditEnding" RowEditEnding="HoursRecordsGrid_OnRowEditEnding"
-                      SelectedCellsChanged="HoursRecordsGrid_OnSelectedCellsChanged" InitializingNewItem="HoursRecordsGrid_OnInitializingNewItem">
+                      SelectedCellsChanged="HoursRecordsGrid_OnSelectedCellsChanged" InitializingNewItem="HoursRecordsGrid_OnInitializingNewItem"
+                      Unloaded="HoursRecordsGrid_OnUnloaded">
                 <DataGrid.Resources>
                     <Style TargetType="DataGridCell">
                         <Setter Property="Foreground" Value="White"/>

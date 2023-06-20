@@ -119,7 +119,7 @@
                   CommandManager.PreviewCanExecute="UsersGrid_OnPreviewCanExecute" HeadersVisibility="Column" Margin="5" AlternatingRowBackground="#333333" 
                   AddingNewItem="UsersGrid_OnAddingNewItem" SelectionChanged="UsersGrid_OnSelectionChanged" PreparingCellForEdit="UsersGrid_OnPreparingCellForEdit"
                   CellEditEnding="UsersGrid_OnCellEditEnding" RowEditEnding="UsersGrid_OnRowEditEnding" SelectedCellsChanged="UsersGrid_OnSelectedCellsChanged"
-                  InitializingNewItem="UsersGrid_OnInitializingNewItem">
+                  InitializingNewItem="UsersGrid_OnInitializingNewItem" Unloaded="UsersGrid_OnUnloaded">
             <DataGrid.Resources>
                 <ObjectDataProvider x:Key="MyEnum" MethodName="GetValues" ObjectType="{x:Type core:Enum}">
                     <ObjectDataProvider.MethodParameters>
